@@ -1,43 +1,75 @@
-# Compatibility report
+# Project progress and compatibility
 
-Last updated: 2026-11-15 (Asia/Singapore).
+Last updated: 2026-11-17 (Asia/Singapore).
 
-## Current project validation
+## Where the project stands
 
-| Client/interface | OS | Client version | Public model | Environment | Status |
-| --- | --- | --- | --- | --- | --- |
-| Codex CLI | Windows | Not pinned | Not selected | Routero UAT; deployed revision unknown | unverified |
-| Codex VS Code extension | Windows | Not pinned | Not selected | Routero UAT; deployed revision unknown | unverified |
+**Phase 2 is in progress. Basic communication with Routero works, but the tested Codex coding workflows do not yet complete.** This phase checks whether an existing Codex client can reliably use Routero before the plugin starts automating setup.
 
-No live gateway tests were executed in Phase 1. Historical evidence does not change these statuses. See [source assessment](docs/gateway-assessment.md).
+The plugin currently opens this report and explains that setup is not ready. It has not configured the tested clients and does not handle their model requests. These test failures therefore occurred in the manually configured Codex-to-Routero workflow, not in a completed plugin workflow.
 
-Status meanings: **verified** passed the defined client task and recorded controls; **experimental** has partial evidence and disclosed limitations with explicit opt-in; **unverified** lacks sufficient current evidence; **unsupported** has a confirmed incompatibility for the recorded combination.
+## What the tests show
 
-## Planned bounded acceptance task
+| Activity | Current result | What this means |
+| --- | --- | --- |
+| Ask Codex for an ordinary text reply | Worked in the user's latest test | Codex returned `READY`; the connection can carry a simple request and response |
+| See models available to a Routero key | Worked for both supplied test keys | Models can be listed, but appearing in that list does not prove they can complete a coding task |
+| Ask DeepSeek to open a local file | The file read was shown, then an error stopped the answer | Part of the coding workflow works; Codex could not finish explaining the file after reading it |
+| Complete the calculator coding task with DeepSeek | Did not complete | File reads were shown, but completed edits, test execution, and the final explanation were not verified |
+| Complete the calculator coding task with GPT-4o | Did not begin visible file work | The model service rejected the description of a tool supplied with the request |
+| Complete the workflow in the VS Code interface | Not yet tested | Results from the standalone command-line client cannot establish that the VS Code interface works |
+| Cancel a response, handle long conversations, or confirm Routero policies | Not yet verified | These checks remain open; no support claim is made |
 
-Use a disposable calculator project inside this repository's ignored `tmp/validation/` directory. Keep Codex configuration isolated inside that directory using a mechanism verified for the pinned client; do not redirect or modify the active agent's own configuration/environment. Do not import unrelated MCP servers or secrets. No validation project has been created or executed yet.
+## The latest, smaller test
 
-1. Record OS build, CLI/IDE versions, gateway deployed revision (or explicitly unknown), public model, actual deployment where observable, context limits, policy state, key profile label, pricing and spend baseline. Never record the key itself.
-2. Verify model-list scoping without admin APIs or expanded catalog queries.
-3. Ask Codex to read `calculator.py`, implement subtraction, run `test_calculator.py`, and answer a follow-up about the change. Inspect the resulting diff and test output independently.
-4. Confirm function/custom tool calls, `apply_patch`, tool output replay, streaming events, continuation, and cancellation. Test context boundaries/compaction separately with a cost estimate before expanding input.
-5. Test model restrictions, key errors/revocation where authorized, budgets, and restart/authentication behavior using isolated configuration. Do not change policies or revoke shared keys silently.
-6. Run capability cases independently: greeting prompt, `modulo` content filter with fresh versus existing conversation, then controlled cache tests. Cache tests compare complete request bodies, distinguish exact from semantic hits, and inspect gateway evidence. Record manual policy changes and restoration.
-7. Record each result and cost; stop on missing billing visibility, unknown pricing that prevents a safe estimate, repeated failure, partial stream/tool ambiguity, or the combined $10 ceiling. Do not blindly retry a coding task.
+The user supplied a screenshot of this sequence:
 
-Historical CLI evidence covers v0.157.1 and an unnamed OpenAI-backed model, but not a currently verified CLI/IDE pair. Five runs per interface are a full-release target, not a Phase 1 result.
+1. Asked for exactly `READY`; Codex returned `READY`.
+2. Asked: ?Read calculator.py and explain its contents. Do not edit files or run tests.?
+3. Codex announced the read and displayed that it had read `calculator.py`.
+4. The next request failed. The error said that a tool action did not have all the matching results in the conversation sent to the model.
 
-## Result record template
+Both prompts appear in one conversation. This is a useful reproduction, but it is not a separate fresh-conversation test. The selected model is reported as `deepseek/deepseek-v4-flash` from the surrounding test discussion; its name is not visible in this latest screenshot.
 
-```text
-Date/time and test ID:
-OS / client / interface / version:
-Gateway environment / deployed revision / evidence source:
-Public model / actual deployment / capability record:
-Key profile label (non-secret) / policy baseline:
-Test action and expected outcome:
-Observed outcome / sanitized request ID / terminal stream state:
-Read / edit / tool output / test execution / follow-up results:
-Usage / billed cost / aggregate test spend:
-Pass, fail, or inconclusive / limitations / cleanup result:
-```
+This shows that the larger editing task and the earlier unsuccessful file search are not needed to encounter the problem. A file read followed by an attempted answer was enough in this run. It does not show which component omitted or changed the required information.
+
+## What remains uncertain
+
+There are two different failures: GPT-4o rejected a tool description, while DeepSeek stopped after a file read because the next request lacked matching tool results. The unavailable backup model service is a separate issue reported in the errors.
+
+The user also reported trying the previous configuration again. Simple text prompts still worked, while the coding task failed. That makes the newly suggested profile a less likely sole explanation, but does not prove all settings are correct. The actual cause could involve Codex, its settings, Routero's handling of requests, conversation history, or the selected model service.
+
+Previous Routero use succeeded, but the exact earlier model, settings, and gateway version have not been matched to the current tests. **A change since the successful test is possible, but not confirmed.** This is not evidence that Codex can never work through Routero.
+
+## Tested versions and scope
+
+| Interface | Version recorded | Current coding-workflow status |
+| --- | --- | --- |
+| Standalone Codex on Windows | Codex 0.157.1; Windows 10.0.26200.0 | GPT-4o and DeepSeek attempts failed; neither is approved for a complete coding workflow |
+| Codex in VS Code | VS Code 1.146.0; extension 26.1111.21308 | Not yet tested through the actual interface |
+
+The engine included with the VS Code extension is version `0.169.0-alpha.11.1`, different from the standalone client. Local checks showed that both engines can use a command to obtain a dummy test token. Those checks used a local test server and did not prove real model or VS Code interface compatibility.
+
+Tests target Routero's UAT environment (`https://api-uat.routero.ai`). The exact gateway version running there is unknown. Findings apply to the reported runs, not every model, platform, or Routero deployment.
+
+## What happens next
+
+Do not repeat the same failed task or switch through models without a specific reason. The useful next step is to compare what Codex sends after the file read with what the selected model service receives, and to compare the current setup with the previously successful one. This investigation has not been assigned to a confirmed faulty component.
+
+Once a specific correction or known-working setup is identified, repeat the small file-reading test first. If that passes, return to the full read ? edit ? run tests ? follow-up task, then test the VS Code interface separately. Phase 2 should not be described as passed until the required evidence is recorded or its remaining scope is explicitly revised.
+
+The full [manual test guide](docs/phase-2-manual-validation.md) is available for a targeted retest. [Technical error details](docs/validation/codex-manual-blockers.md) and the [test record](docs/phase-2-validation.md) are separate references for readers who need more detail.
+
+## Costs and safeguards
+
+Agent-run checks have made no billable model requests, so their model-request spending is $0. The user has run live tests; their total request count and cost are unknown. **Total Phase 2 spending must not be reported as $0.** The authorized testing ceiling remains $10 across both supplied keys.
+
+The user reports that the Admin Group key has no key budget and that the demo key's previous $0.01 budget was removed. Current policy settings and model prices have not been confirmed. The account-information check also returned an error, so it did not establish a spending baseline; that error is not being treated as budget exhaustion.
+
+All project edits remain inside this repository. No API keys are included in the documentation. No gateway settings were changed by the agent. The user manually tested and changed their own Codex configuration; the agent did not edit their normal settings.
+
+## Earlier preparation
+
+Phase 1 produced the [gateway source assessment](docs/gateway-assessment.md). Phase 2 preparation added a small calculator project and safety checks for the test tools. Six offline checks for safe account discovery and two calculator baseline tests passed. These are useful preparation, not proof that the coding workflow passes.
+
+Recorded measurements are available in the [evidence file](docs/validation/phase-2-evidence.json). Older no-live-test statements refer to the agent-run baseline before the later user-reported attempts.

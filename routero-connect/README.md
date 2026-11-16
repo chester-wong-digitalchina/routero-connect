@@ -4,7 +4,15 @@ Routero Connect is an incremental VS Code extension and planned companion CLI fo
 
 ## Current status
 
-Phase 1: source assessment complete; live compatibility validation pending. No client/model combination is verified by this project yet.
+**Phase 2 is in progress. Routero can answer simple messages, but a complete Codex coding task has not yet passed testing.**
+
+In the latest DeepSeek test, Codex replied `READY`, then opened `calculator.py` when asked to explain it. An error stopped it from explaining the file after the read. This smaller test did not ask for edits or tests, so those actions are not needed to reproduce the problem. A separate GPT-4o attempt stopped before any visible file work.
+
+We have not established whether the cause is in Codex, its settings, Routero's handling of the request, or the selected model service. Earlier successful use is relevant, but there is not enough matching evidence to confirm what changed. The plugin currently displays project status; it does not process these model requests or automatically configure Codex.
+
+The next step is to compare the information sent before and after the file read and check it against the previously working setup. Repeating the same failed task is not needed. **Phase 2 is still open; no complete coding workflow is approved for use yet.**
+
+See the [progress and compatibility report](compatibility-report.md) for what works, what remains untested, and what happens next. Technical error details are kept in a [separate reference](docs/validation/codex-manual-blockers.md).
 
 Implemented commands:
 
@@ -13,7 +21,7 @@ Implemented commands:
 
 Initial target: **Codex on Windows**, using `https://api-uat.routero.ai`. Production and UAT credentials must remain separate.
 
-See [gateway assessment](docs/gateway-assessment.md), [compatibility report](compatibility-report.md), and [incremental roadmap](docs/roadmap.md).
+See [gateway assessment](docs/gateway-assessment.md), [compatibility report](compatibility-report.md), [manual Phase 2 tests](docs/phase-2-manual-validation.md), [validation tooling](scripts/validation/README.md), and [incremental roadmap](docs/roadmap.md).
 
 ## Local development
 
