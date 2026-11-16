@@ -1,5 +1,8 @@
 .vscode/**
 tmp/**
+scripts/**
+fixtures/**
+**/*.log
 .vscode-test/**
 out/**
 node_modules/**

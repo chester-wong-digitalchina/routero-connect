@@ -15,3 +15,13 @@ The user's quality/documentation-first direction takes priority over historical 
 | 9. Expansion | Claude Code, guided clients, native Chat and additional platforms as separate increments | Each feature passes its own protocol/client gate |
 
 Phase 1 is complete as a source assessment; live compatibility remains pending. No gateway, user settings, policy, credential, or external project writes are part of Phase 1. All current writes must stay inside this project. Later phases must respect that boundary unless the user explicitly changes it.
+
+## Current progress
+
+Phase 2 began on 2026-11-16. The project can list available models, and local checks of the proposed sign-in method passed. The user can also obtain ordinary text replies through Routero.
+
+On 2026-11-17, manual coding tests did not complete. GPT-4o stopped before visible file work. DeepSeek opened files, but the request after a read failed. A smaller test showed the same problem when only reading and explaining one file; editing and running tests were not required.
+
+Phase 2 remains open. The next step is to understand the difference from earlier successful use and check what happens to the file-reading result before it reaches the model. We have not established that the plugin configuration, Codex, Routero, or the model service is responsible, or confirmed that a recent change caused it.
+
+Foundation work that does not depend on a working model connection can be planned separately, but no later phase is declared complete and automatic setup must not describe an unverified coding workflow as supported. See the [progress report](../compatibility-report.md) for the current evidence and next steps.

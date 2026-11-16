@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-16",
+  "timezone": "Asia/Singapore",
+  "branch": "phase-2",
+  "os": "Windows NT 10.0.26200.0 x64",
+  "versions": {
+    "cli": "0.157.1",
+    "vscode": "1.146.0",
+    "extension": "26.1111.21308",
+    "ide_bundled_engine": "0.169.0-alpha.11.1"
+  },
+  "gateway": {
+    "origin": "https://api-uat.routero.ai",
+    "deployed_revision": "unknown",
+    "candidate_uat_revision": "bc75f9067ee404ae09b9ee8b3a106451c677cddd",
+    "develop_revision": "947fe688fec2e69c4577224968c8473de701734d"
+  },
+  "discovery": {
+    "admin-group": {
+      "timestamp_utc": "2026-11-15T17:26:28.634734+00:00",
+      "model_list_status": 200,
+      "model_count": 16,
+      "self_key_info": {
+        "path": "/key/info",
+        "status": 400,
+        "outcome": "request_rejected",
+        "content_type": "application/json",
+        "server": "cloudflare",
+        "error": "No key provided and no api_key on the authenticated token"
+      }
+    },
+    "demo": {
+      "timestamp_utc": "2026-11-15T17:26:54.658438+00:00",
+      "model_list_status": 200,
+      "model_count": 10,
+      "self_key_info": {
+        "path": "/key/info",
+        "status": 400,
+        "outcome": "request_rejected",
+        "content_type": "application/json",
+        "server": "cloudflare",
+        "error": "No key provided and no api_key on the authenticated token"
+      }
+    }
+  },
+  "candidate_model": "openai/gpt-4o",
+  "candidate_reason": "Listed for both keys, but user-run Codex task rejected its tool schema; do not activate.",
+  "local_auth_probes": {
+    "standalone": {
+      "timestamp_utc": "2026-11-15T17:28:36.240234+00:00",
+      "label": "standalone",
+      "executable_sha256": "8cb0e69e99ff2a158c54815db82d0f2e524d8f301bc30184722cfd1ae5973574",
+      "exit_code": 1,
+      "requests": [
+        {
+          "path": "/responses",
+          "dummy_auth_matched": true,
+          "stream": true,
+          "tool_types": [
+            "function",
+            "namespace",
+            "web_search"
+          ]
+        }
+      ],
+      "local_command_auth_passed": true,
+      "inference_requests": 0,
+      "cost_usd": 0
+    },
+    "ide-bundled": {
+      "timestamp_utc": "2026-11-15T17:28:35.458423+00:00",
+      "label": "ide-bundled",
+      "executable_sha256": "a473edef0d52c4ffa067060ddd48a3d85720a3256cbd0510aab71d406f3af744",
+      "exit_code": 1,
+      "requests": [
+        {
+          "path": "/responses",
+          "dummy_auth_matched": true,
+          "stream": true,
+          "tool_types": [
+            "function",
+            "namespace",
+            "web_search"
+          ]
+        }
+      ],
+      "local_command_auth_passed": true,
+      "inference_requests": 0,
+      "cost_usd": 0
+    }
+  },
+  "user_reported_key_state": {
+    "admin-group": {
+      "key_label": "test",
+      "key_budget": "none reported"
+    },
+    "demo": {
+      "key_label": "test_demo",
+      "key_budget": "previous $0.01 removed by user"
+    },
+    "policy_state": "not confirmed",
+    "model_access": "user reports all models available; listed catalogs differ"
+  },
+  "live_tests": {
+    "inference": "user-run CLI attempts; both coding-task gates failed",
+    "file_read": "file reads displayed in two DeepSeek screenshots; post-read response fails",
+    "file_edit": "not verified after failed CLI attempts",
+    "apply_patch": "not tested",
+    "test_execution": "not tested",
+    "follow_up": "text-to-file request attempted in same conversation; post-read answer failed; full coding follow-up unverified",
+    "stream_event_integrity": "not tested",
+    "cancellation": "not tested",
+    "continuation": "not tested",
+    "context_boundary": "not tested",
+    "compaction": "not tested",
+    "policy_behavior": "not tested",
+    "cache_behavior": "not tested",
+    "budget_enforcement": "not tested",
+    "restart_auth": "not tested"
+  },
+  "inference_requests": 0,
+  "phase_2_inference_spend_usd": 0,
+  "authorized_combined_ceiling_usd": 10,
+  "external_file_writes": "none authorized; client probe outputs and state confined to project",
+  "blocking_information": [
+    "active key/model policies",
+    "selected model Routero pricing",
+    "usage/cost visibility before live inference",
+    "manual CLI/IDE coding results"
+  ],
+  "next_step": "Compare original client and translated requests, plus earlier working setup; targeted retest only, root-cause ownership unconfirmed.",
+  "manual_results_updated": "2026-11-17",
+  "manual_cli_results": [
+    {
+      "model": "openai/gpt-4o",
+      "client_version": "0.157.1",
+      "evidence": "user screenshot",
+      "outcome": "failed acceptance",
+      "failure": "invalid_function_parameters for js at tools[8].tools[0].parameters; no fallback model group",
+      "file_read": "not observed",
+      "edits_tests_follow_up": "not completed",
+      "root_cause": "unconfirmed"
+    },
+    {
+      "model": "deepseek/deepseek-v4-flash",
+      "client_version": "0.157.1",
+      "evidence": "user screenshot",
+      "outcome": "failed acceptance",
+      "file_read": "observed in screenshot",
+      "failure": "insufficient tool messages following tool_calls; BytePlus fallback unavailable",
+      "edits_tests_follow_up": "not verified",
+      "root_cause": "unconfirmed"
+    },
+    {
+      "model": "deepseek/deepseek-v4-flash",
+      "model_source": "user test context; not visible in latest screenshot",
+      "client_version": "0.157.1 baseline; version not visible in latest screenshot",
+      "evidence": "third user screenshot and accompanying report",
+      "outcome": "single-file explanation did not complete",
+      "sequence": [
+        "READY response succeeded",
+        "read-only explanation of calculator.py requested in the same conversation",
+        "file read displayed",
+        "next request rejected for insufficient tool results"
+      ],
+      "fresh_conversation_verified": false,
+      "edits_or_test_execution_required_to_reproduce": false,
+      "root_cause": "unconfirmed"
+    }
+  ],
+  "inference_requests_scope": "agent-run only; user-run request count unknown",
+  "phase_2_inference_spend_scope": "agent-run only; total including user tests unknown",
+  "user_run_cost_usd": null,
+  "user_reported_comparison": "Earlier configuration restored: simple text works, coding task still fails. Earlier successful setup has not been matched; regression unconfirmed."
+}
