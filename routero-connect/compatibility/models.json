@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "id": "codex-cli-01571-uat-gpt4o-failed",
+      "modelId": "openai/gpt-4o",
+      "client": "codex-cli",
+      "origin": "https://api-uat.routero.ai",
+      "clientVersions": {
+        "minimum": "0.157.1",
+        "maximumExclusive": "0.157.2"
+      },
+      "protocol": "responses",
+      "status": "unsupported",
+      "contextWindow": null,
+      "maxOutputTokens": null,
+      "capabilities": {
+        "streaming": null,
+        "tools": null
+      },
+      "continuation": {
+        "supported": null,
+        "limitations": [
+          "Complete coding conversation has not passed."
+        ]
+      },
+      "compaction": {
+        "mode": "unknown",
+        "limitations": [
+          "Not tested."
+        ]
+      },
+      "validation": {
+        "date": "2026-11-17",
+        "result": "failed",
+        "evidence": [
+          {
+            "kind": "manual",
+            "reference": "docs/validation/codex-manual-blockers.md"
+          }
+        ]
+      },
+      "limitations": [
+        "User-reported run rejected the js tool schema. Root cause unconfirmed. This record covers only the recorded client version and environment."
+      ]
+    },
+    {
+      "id": "codex-cli-01571-uat-deepseek-failed",
+      "modelId": "deepseek/deepseek-v4-flash",
+      "client": "codex-cli",
+      "origin": "https://api-uat.routero.ai",
+      "clientVersions": {
+        "minimum": "0.157.1",
+        "maximumExclusive": "0.157.2"
+      },
+      "protocol": "responses",
+      "status": "unsupported",
+      "contextWindow": null,
+      "maxOutputTokens": null,
+      "capabilities": {
+        "streaming": null,
+        "tools": null
+      },
+      "continuation": {
+        "supported": false,
+        "limitations": [
+          "File read displayed, then next request rejected for missing tool results."
+        ]
+      },
+      "compaction": {
+        "mode": "unknown",
+        "limitations": [
+          "Not tested."
+        ]
+      },
+      "validation": {
+        "date": "2026-11-17",
+        "result": "failed",
+        "evidence": [
+          {
+            "kind": "manual",
+            "reference": "docs/validation/codex-manual-blockers.md"
+          }
+        ]
+      },
+      "limitations": [
+        "User-reported coding and single-file explanation tasks failed after file reads. Root cause unconfirmed."
+      ]
+    }
+  ]
+}

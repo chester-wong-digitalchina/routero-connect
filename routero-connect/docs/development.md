@@ -1,0 +1,57 @@
+# Development and validation
+
+## Tooling
+
+Tested development versions: **Node.js 24.18.0** and **npm 11.16.0**. `.node-version` pins the development Node version; `packageManager` records npm. The supported development range is Node 24 (from 24.18.0) and npm 11 (from 11.16.0). Wider runtime support has not been established.
+
+All direct development dependencies are pinned to the already installed versions resolved in `package-lock.json`; no new dependencies were added in Phase 3. Use `npm ci` to reproduce the lockfile. `.npmrc` keeps the default npm cache under this project's ignored `tmp/npm-cache/` when commands run from the repository root. Do not change global npm configuration or install globally for development.
+
+The VS Code manifest remains `^1.146.0`, matching the observed installed host; this is not a tested range of every future release. Actual VS Code UI acceptance is separate from a successful TypeScript build. Validation scripts use Python 3.14.6 in the current environment and are separate from the TypeScript plugin/CLI runtime.
+
+## Commands
+
+Run from the repository root. Use `npm.cmd` in PowerShell if execution policy blocks `npm.ps1`.
+
+```powershell
+npm ci
+npm test
+npm run compile
+npm run package
+node dist/cli.js --help
+node dist/cli.js status
+node dist/cli.js validate-url https://api-uat.routero.ai/v1
+node dist/cli.js doctor
+```
+
+- `npm test`: type-check, lint with zero warnings, compile test code, and run Node's built-in unit-test runner. No Electron download, gateway request, or credential access occurs.
+- `npm run test:unit`: unit tests without the separate lint/type-check pretest hook; test compilation still checks types.
+- `npm run compile`: type-check, lint, and build both development bundles (`dist/extension.js`, `dist/cli.js`).
+- `npm run package`: type-check, lint, and build both production bundles. It does not create a VSIX or publish an npm package.
+- `npm run test:vscode`: opt-in VS Code integration runner; may download/launch Electron. It currently contains the inherited scaffold test, not full UI acceptance. Do not run it against normal user state under the current project-only write boundary.
+- `npm run cli -- <command>`: an alternative to `node dist/cli.js <command>` after building. The npm bin entry is prepared for later packaging; global CLI installation is not part of Phase 3.
+
+CLI exit codes: `0` for a completed status/help/URL check, `2` for rejected arguments/URLs, and `1` for unavailable setup or an unexpected failure. In particular, **offline `doctor` intentionally returns 1**: it reports that no live checks ran and setup is unavailable. It does not claim your account or gateway is broken.
+
+Never pass a key as a CLI argument or include it in a URL. No current CLI command takes a key or opens the credential store. Unknown arguments are not echoed.
+
+## Updating compatibility evidence
+
+Read [the architecture](architecture.md) and [catalog format](../compatibility/README.md). Add evidence first; never copy a synthetic test record into the real catalog or turn a model name into an assumed context limit. Keep failed/unknown values honest. Tests parse the actual catalog and ensure Phase 2 failures stay non-activatable.
+
+Useful checks when modifying code:
+
+```powershell
+python -m unittest discover -s scripts/validation -p 'test_*.py' -v
+python -m unittest discover -s fixtures/validation/calculator -v
+git diff --check
+```
+
+The Python suites are offline. Only rerun the real UAT discovery/manual tests when new evidence justifies them; this phase requires no billable inference. Live task failures remain in the [progress report](../compatibility-report.md).
+
+## Build and package boundaries
+
+`esbuild.js` bundles the CLI and extension separately from one shared source tree. Core modules must not import VS Code, Node filesystem/network code, or the CLI. Adapter contracts are types only; future implementations must enforce their runtime safety requirements.
+
+Git ignores dependencies, bundles, compiled tests, temporary state, logs, Python caches, and VSIX output. `.vscodeignore` excludes source/test tooling and scratch data from future VSIX packages. Checked-in project docs and sanitized compatibility data are intentional; never bundle full account reports or real keys.
+
+On this Windows sandbox, esbuild can fail while inspecting an ancestor directory. An approved build outside the sandbox is needed in that environment; the output still stays in this project. Do not disable security policy or modify directories outside the project as a workaround.

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { READINESS_MESSAGE } from "./core";
 
 /** Expose readiness without collecting a key before compatibility is established. */
 export function activate(context: vscode.ExtensionContext): void {
@@ -13,7 +14,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("routero.connect", async () => {
       const action = "View Integration Status";
       const selected = await vscode.window.showInformationMessage(
-        "Routero Connect: Codex compatibility validation is pending. Setup is not available yet.",
+        `Routero Connect: ${READINESS_MESSAGE}`,
         action,
       );
       if (selected === action) {

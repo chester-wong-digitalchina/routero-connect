@@ -4,45 +4,48 @@ Routero Connect is an incremental VS Code extension and planned companion CLI fo
 
 ## Current status
 
-**Phase 2 is in progress. Routero can answer simple messages, but a complete Codex coding task has not yet passed testing.**
+**Phase 3 adds shared foundations and an offline command-line tool. The plugin still cannot configure Codex automatically, and Phase 2's real coding tests remain unresolved.**
 
-In the latest DeepSeek test, Codex replied `READY`, then opened `calculator.py` when asked to explain it. An error stopped it from explaining the file after the read. This smaller test did not ask for edits or tests, so those actions are not needed to reproduce the problem. A separate GPT-4o attempt stopped before any visible file work.
+You can now check project readiness and validate a Routero API address from the command line without sending a request or entering a key. The shared code also defines how future setup should keep credentials tied to one gateway, decide which tested models can be offered, and keep secrets out of diagnostic reports.
 
-We have not established whether the cause is in Codex, its settings, Routero's handling of the request, or the selected model service. Earlier successful use is relevant, but there is not enough matching evidence to confirm what changed. The plugin currently displays project status; it does not process these model requests or automatically configure Codex.
+The user can obtain simple replies through Routero, but current coding tests stop before or after a file read. No complete coding workflow has passed. The cause remains unconfirmed; Phase 3 does not fix, bypass, or relabel those failures. See the [progress report](compatibility-report.md).
 
-The next step is to compare the information sent before and after the file read and check it against the previously working setup. Repeating the same failed task is not needed. **Phase 2 is still open; no complete coding workflow is approved for use yet.**
+VS Code commands:
 
-See the [progress and compatibility report](compatibility-report.md) for what works, what remains untested, and what happens next. Technical error details are kept in a [separate reference](docs/validation/codex-manual-blockers.md).
+- **Routero: Integration Status** opens the progress report.
+- **Routero: Connect** explains readiness and offers the report. It does not collect credentials, contact the gateway, or change client settings yet.
 
-Implemented commands:
+Initial live-validation target remains **Codex on Windows**, using `https://api-uat.routero.ai`. Production and UAT credentials stay separate. The compatibility catalog currently contains only the two failed test combinations; neither can be activated.
 
-- **Routero: Integration Status** opens the compatibility baseline inside VS Code.
-- **Routero: Connect** explains readiness and offers the baseline. It does not collect credentials, contact the gateway, or change client settings yet.
+## Try the offline CLI
 
-Initial target: **Codex on Windows**, using `https://api-uat.routero.ai`. Production and UAT credentials must remain separate.
-
-See [gateway assessment](docs/gateway-assessment.md), [compatibility report](compatibility-report.md), [manual Phase 2 tests](docs/phase-2-manual-validation.md), [validation tooling](scripts/validation/README.md), and [incremental roadmap](docs/roadmap.md).
-
-## Local development
-
-Use the versions resolved by `package-lock.json`. The manifest currently requires VS Code `^1.146.0`; this is a scaffold requirement, not a tested support range. The appropriate minimum host version and Node.js runtime will be pinned during compatibility/foundation work.
+From the project root, build with the documented Node/npm versions:
 
 ```powershell
 npm ci
 npm run compile
-npm run package
+node dist/cli.js status
+node dist/cli.js validate-url https://api-uat.routero.ai/v1
+node dist/cli.js doctor
 ```
 
-If PowerShell blocks `npm.ps1`, use `npm.cmd` for these commands; no execution-policy change is needed.
+`status` describes project readiness. `validate-url` checks an address and shows the normalized endpoints, without contacting them. `doctor` shows which checks have not run; it intentionally exits with code 1 because automatic setup is not available. No command reads credentials or client settings. Do not pass an API key as an argument.
 
-`compile` checks TypeScript, lints source, and builds the development bundle. `package` performs the same checks and builds the production bundle; it does **not** create a VSIX. Press F5 in VS Code to launch the Extension Development Host, then run **Routero: Integration Status** from the Command Palette.
+## Development
 
-`npm test` uses the VS Code integration-test runner and can require an Electron download. The scaffold's sample test does not establish gateway compatibility. Automated behavior tests will accompany the corresponding implementation increments.
+Tested tooling: **Node.js 24.18.0 / npm 11.16.0**, with direct dependencies pinned to the lockfile. The manifest still targets VS Code `^1.146.0`; a build is not proof of UI compatibility. Use `npm.cmd` if PowerShell blocks `npm.ps1`.
+
+- `npm test` runs type checking, lint, and offline TypeScript unit tests; it does not download Electron or contact Routero.
+- `npm run compile` builds both development bundles.
+- `npm run package` builds both production bundles; it does not create a VSIX or publish a CLI package.
+- `npm run test:vscode` is the separate opt-in VS Code test runner. Its scaffold test is not full UI acceptance.
+
+Read [development instructions](docs/development.md), [architecture](docs/architecture.md), [compatibility data](compatibility/README.md), and the [roadmap](docs/roadmap.md). Phase 2's [manual guide](docs/phase-2-manual-validation.md), [technical errors](docs/validation/codex-manual-blockers.md), and [validation tools](scripts/validation/README.md) remain available for a targeted retest, not repeated blind retries.
 
 ## Boundaries
 
 - Gateway repository access is read-only. Development changes stay inside this project directory.
 - No API keys belong in repository files, subprocess arguments, logs, fixtures, or documentation.
-- This phase makes no changes to user-level Codex settings or credential stores.
+- Phase 3 has no credential-store implementation, persistent profiles, configuration writer, or real client adapter. User-level settings stay untouched.
 - Live inference requires an explicit test action. The authorized aggregate testing ceiling is $10 across both UAT keys; server-side enforcement and reliable usage visibility are still unconfirmed.
 - Claude Code, native VS Code Chat, guided clients, and other platforms are planned, not implemented.

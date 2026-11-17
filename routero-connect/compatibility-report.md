@@ -8,6 +8,12 @@ Last updated: 2026-11-17 (Asia/Singapore).
 
 The plugin currently opens this report and explains that setup is not ready. It has not configured the tested clients and does not handle their model requests. These test failures therefore occurred in the manually configured Codex-to-Routero workflow, not in a completed plugin workflow.
 
+## What Phase 3 adds
+
+The project now has a shared code foundation and an offline command-line tool for project status, API-address validation, and clearly labeled readiness reports. Future setup can use the same rules for gateway addresses, credential references, model eligibility, and redacted errors. This work does not send model requests, store keys, or change Codex settings.
+
+The versioned compatibility catalog preserves the two failed Phase 2 combinations and offers no activatable model. Phase 3 can be developed independently, but it does not complete Phase 2 or make the coding workflow ready. See the [architecture](docs/architecture.md) and [development guide](docs/development.md) for implementation details.
+
 ## What the tests show
 
 | Activity | Current result | What this means |
