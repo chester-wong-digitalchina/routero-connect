@@ -1,6 +1,6 @@
 # Project progress and compatibility
 
-Last updated: 2026-11-17 (Asia/Singapore).
+Last updated: 2026-11-22 (Asia/Singapore).
 
 ## Where the project stands
 
@@ -13,6 +13,12 @@ The plugin currently opens this report and explains that setup is not ready. It 
 The project now has a shared code foundation and an offline command-line tool for project status, API-address validation, and clearly labeled readiness reports. Future setup can use the same rules for gateway addresses, credential references, model eligibility, and redacted errors. This work does not send model requests, store keys, or change Codex settings.
 
 The versioned compatibility catalog preserves the two failed Phase 2 combinations and offers no activatable model. Phase 3 can be developed independently, but it does not complete Phase 2 or make the coding workflow ready. See the [architecture](docs/architecture.md) and [development guide](docs/development.md) for implementation details.
+
+## What Phase 4 adds
+
+The CLI can now keep a key in Windows' secure credential store and let a separate helper retrieve it for a client. It tracks shared ownership so removing one profile does not delete another profile's key. An approved native test installed helper version 0.0.3 outside the extension directory, exercised a dummy key across separate processes, and confirmed that both installed Codex engines could obtain that dummy token for a local test server. The dummy credential was removed afterward.
+
+No supplied real key was stored, no client settings changed, and no live model request was made. This confirms credential handling, not a working coding task or actual VS Code GUI acceptance. Phase 2's failures remain unresolved. See [credential instructions](docs/credentials.md) and [Phase 4 validation](docs/phase-4-validation.md).
 
 ## What the tests show
 

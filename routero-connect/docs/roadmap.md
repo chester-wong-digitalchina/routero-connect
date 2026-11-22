@@ -29,3 +29,10 @@ Foundation work that does not depend on a working model connection can be planne
 Phase 3 proceeded while the Phase 2 live-test problem remains unresolved. Shared URL/profile/compatibility/diagnostic rules, adapter interfaces, and a small offline CLI are implemented on branch `phase-3`. No credential storage, client-setting changes, or live connection is added. Phase 2 is still open; foundation work does not authorize activating the failed model combinations.
 
 All 26 TypeScript unit tests, type checking, lint, production builds, and offline CLI smoke checks passed. See the [Phase 3 validation record](phase-3-validation.md), [architecture](architecture.md), and [development instructions](development.md). The next implementation area is secure credentials, with real setup still gated on resolving live compatibility.
+
+## Phase 4 credential work
+
+On 2026-11-18, the Windows credential service, token-only helper commands, and version-pinned helper staging were implemented on `phase-4`. The branch was first fast-forwarded to include the committed Phase 3 foundations. An approved dummy-key test passed native storage, replacement, sharing, cleanup, separate-process reads, and authentication by both installed Codex engines on loopback. Helper 0.0.3 is the final pinned build (0.0.2 retained for rollback) independently of the extension; no real key was stored and no client settings changed.
+
+Actual GUI and Windows reboot validation remain untested. This increment does not resolve Phase 2 or provide automatic setup. See [validation](phase-4-validation.md) and [credential guide](credentials.md). Next comes the safe configuration engine; a real adapter is still gated on successful live compatibility evidence.
+

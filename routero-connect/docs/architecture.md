@@ -1,6 +1,6 @@
 # Shared foundations
 
-Phase 3 adds the common building blocks used by the future CLI and VS Code setup flow. It does not solve the Phase 2 coding failures, install credentials, or edit a client's settings.
+Phase 3 added shared foundations, and Phase 4 adds Windows credentials and a pinned helper. The outstanding live coding compatibility tests remain unresolved. Client configuration editing is planned for Phase 5.
 
 ## Code boundaries
 
@@ -8,6 +8,8 @@ Phase 3 adds the common building blocks used by the future CLI and VS Code setup
 | --- | --- | --- |
 | `src/core/` | API-root validation, origin-bound profiles, compatibility decisions, redacted diagnostics, project readiness | No VS Code dependency, filesystem, network, credential-store implementation, or tool execution |
 | `src/cli/run.ts` | Parse the small offline command set and format shared-core results | No setup, discovery, inference, or configuration writes |
+| `src/cli/credentials.ts` | Explicit credential arguments and bounded stdin; token-only helper output | No secret arguments, gateway calls, or client settings |
+| `src/credentials/` | Ownership-aware lifecycle, native Windows backend, safe helper staging | No plaintext fallback or implicit global installation |
 | `src/cli/main.ts` | Process arguments, output streams, and exit codes | No raw exception or argument dumps |
 | `src/extension.ts` | VS Code commands, notifications, and opening the progress report | No duplicated URL/compatibility logic or inference |
 | `src/adapters/contracts.ts` | Future client detection, plans, apply, diagnostics, and rollback interfaces | No adapter or configuration writer is implemented yet |
@@ -50,4 +52,4 @@ Factories redact known secret values, Routero-style key strings, bearer/Basic au
 
 The future adapter contract separates `detect`, `plan`, `apply`, `diagnose`, and `rollback`. Plans describe target files, revision expectations, changed fields, redacted diffs, conflicts, and restart instructions. Results distinguish successful changes, conflicts, and failures. No file patch, backup, credential access, or rollback is implemented by these types.
 
-Phase 4 supplies reviewed credential storage and a stable helper. Phase 5 implements safe configuration editing and three-way rollback. A real client adapter must still pass the outstanding live compatibility gate before it can be advertised as working.
+Phase 4 implements Windows Credential Manager storage and a version-pinned helper; see [credential design](credentials.md) and [validation](phase-4-validation.md). VS Code SecretStorage remains separate and will be used where applicable by future UI/provider work. Phase 5 will add safe configuration editing and three-way rollback. A real client adapter must still pass the outstanding live compatibility gate before it can be advertised as working.

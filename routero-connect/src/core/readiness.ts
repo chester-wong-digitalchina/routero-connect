@@ -1,6 +1,6 @@
 import { createDiagnostic, type Diagnostic } from "./diagnostics";
 
-export const READINESS_MESSAGE = "Shared foundations are available. Codex coding compatibility is not yet verified; automatic setup is unavailable.";
+export const READINESS_MESSAGE = "Shared foundations and Windows credential commands are available. Codex coding compatibility is not yet verified; automatic setup is unavailable.";
 
 /** Offline project readiness; never represents a live connection test. */
 export function projectDiagnostics(): readonly Diagnostic[] {

@@ -32,7 +32,7 @@ node dist/cli.js doctor
 
 CLI exit codes: `0` for a completed status/help/URL check, `2` for rejected arguments/URLs, and `1` for unavailable setup or an unexpected failure. In particular, **offline `doctor` intentionally returns 1**: it reports that no live checks ran and setup is unavailable. It does not claim your account or gateway is broken.
 
-Never pass a key as a CLI argument or include it in a URL. No current CLI command takes a key or opens the credential store. Unknown arguments are not echoed.
+Never pass a key as a CLI argument or include it in a URL. No CLI command accepts a key as an argument. The three offline checks never access credentials; explicit `credential` commands do. Unknown arguments are not echoed. Read the [credential guide](credentials.md) before performing OS-store operations.
 
 ## Updating compatibility evidence
 
@@ -55,3 +55,17 @@ The Python suites are offline. Only rerun the real UAT discovery/manual tests wh
 Git ignores dependencies, bundles, compiled tests, temporary state, logs, Python caches, and VSIX output. `.vscodeignore` excludes source/test tooling and scratch data from future VSIX packages. Checked-in project docs and sanitized compatibility data are intentional; never bundle full account reports or real keys.
 
 On this Windows sandbox, esbuild can fail while inspecting an ancestor directory. An approved build outside the sandbox is needed in that environment; the output still stays in this project. Do not disable security policy or modify directories outside the project as a workaround.
+
+## Phase 4 credential validation
+
+`npm test` includes mocked credential/CLI/ownership checks and project-local helper staging. It does not create Windows credentials. The opt-in native test writes a unique dummy Windows Credential Manager entry and cleans it up, so it requires explicit authorization beyond project-only writes:
+
+```powershell
+npm run compile-tests
+node out/test/manual/windows-credentials.js --write-dummy-credentials
+```
+
+The default stages its helper inside the project. The additional `--install-helper` flag stages a new pinned user helper under `%LOCALAPPDATA%`; do not use it without authorization or against an existing helper version. It runs both installed Codex engines against loopback, which intentionally returns HTTP 418 rather than calling a model. No real keys or global environment variables are used. See [recorded results](phase-4-validation.md); do not rerun native tests merely to repeat already passing evidence.
+
+Use `--use-installed-helper` on the native test only for an explicitly authorized targeted check of the current installed version. It verifies the script and manifest against the current bundle hash and never overwrites that installation.
+
