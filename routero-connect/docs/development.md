@@ -69,3 +69,17 @@ The default stages its helper inside the project. The additional `--install-help
 
 Use `--use-installed-helper` on the native test only for an explicitly authorized targeted check of the current installed version. It verifies the script and manifest against the current bundle hash and never overwrites that installation.
 
+## Phase 5 configuration engine
+
+The runtime dependency `toml-eslint-parser` is pinned to **1.0.3**, with its integrity and transitive resolution in `package-lock.json`. It is used through a local asynchronous import for TOML 1.0 AST ranges. No parser download occurs at runtime, and no whole-file value serializer is used. The original Phase 3 direct development pins remain unchanged.
+
+```powershell
+npm test
+npm run demo:config
+```
+
+The tests use explicit fixture paths under ignored `out/`; the demo uses ignored `tmp/validation/`. Windows ACL commands and all test recovery files are confined to these selected fixture locations. Do not run the opt-in Phase 4 native credential test as part of Phase 5: it is unrelated and writes the OS credential store.
+
+The engine is a reusable source component in `src/config/`, checked by TypeScript and unit tests. It is not a new production config-write command or a separately published package. Future CLI/VS Code adapters will import it; `npm run package` still builds the existing extension/CLI entry points. The demo runs the compiled library from `out/` after test compilation.
+
+Read [configuration safety and limits](configuration-engine.md) before integrating `plan`, `apply`, or `rollback`. A plan is in-memory/single-use; durable rollback uses a private transaction record. The fixture-only recovery exception must never become a production default. Stable-version client compatibility and credential handling still require their separate checks.

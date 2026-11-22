@@ -40,19 +40,20 @@
     "test": "npm run test:unit",
     "test:unit": "npm run compile-tests && node --test \"out/test/unit/*.test.js\"",
     "test:vscode": "npm run compile-tests && npm run compile && vscode-test",
-    "cli": "node dist/cli.js"
+    "cli": "node dist/cli.js",
+    "demo:config": "npm run compile-tests && node out/test/manual/config-engine-demo.js"
   },
   "devDependencies": {
-    "@types/vscode": "1.146.0",
     "@types/mocha": "10.0.10",
     "@types/node": "24.19.2",
-    "typescript-eslint": "8.72.2",
-    "eslint": "10.15.0",
+    "@types/vscode": "1.146.0",
+    "@vscode/test-cli": "0.0.15",
+    "@vscode/test-electron": "3.1.0",
     "esbuild": "0.28.2",
+    "eslint": "10.15.0",
     "npm-run-all": "4.1.5",
     "typescript": "6.0.3",
-    "@vscode/test-cli": "0.0.15",
-    "@vscode/test-electron": "3.1.0"
+    "typescript-eslint": "8.72.2"
   },
   "overrides": {
     "diff": "^8.0.4",
@@ -61,5 +62,8 @@
   "packageManager": "npm@11.16.0",
   "bin": {
     "routero-connect": "./dist/cli.js"
+  },
+  "dependencies": {
+    "toml-eslint-parser": "1.0.3"
   }
 }

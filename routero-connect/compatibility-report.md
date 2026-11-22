@@ -20,6 +20,12 @@ The CLI can now keep a key in Windows' secure credential store and let a separat
 
 No supplied real key was stored, no client settings changed, and no live model request was made. This confirms credential handling, not a working coding task or actual VS Code GUI acceptance. Phase 2's failures remain unresolved. See [credential instructions](docs/credentials.md) and [Phase 4 validation](docs/phase-4-validation.md).
 
+## What Phase 5 adds
+
+The project can now prepare a redacted configuration preview, apply reviewed field changes, and restore the fields it managed while retaining later user edits. It creates private recovery records and reports conflicts rather than silently overwriting them. The engine and demonstration have used dummy files inside the project only; your live Codex configuration has not been changed.
+
+This is preparation for the real setup workflow. There is not yet a production configuration command or client adapter, and the earlier live coding failures have not been retested or reclassified. See [the configuration guide](docs/configuration-engine.md) and [Phase 5 validation](docs/phase-5-validation.md).
+
 ## What the tests show
 
 | Activity | Current result | What this means |

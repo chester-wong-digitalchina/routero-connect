@@ -3,6 +3,9 @@ tmp/**
 scripts/**
 fixtures/**
 **/*.log
+**/.routero-connect.lock
+**/.routero-*.tmp
+**/.record-*.tmp
 .vscode-test/**
 out/**
 node_modules/**

@@ -9,3 +9,6 @@ tmp/
 !.env.example
 __pycache__/
 *.log
+.routero-connect.lock
+.routero-*.tmp
+.record-*.tmp

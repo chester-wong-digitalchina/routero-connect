@@ -30,13 +30,13 @@ export interface ConfigPlan {
 }
 
 export interface ApplyResult {
-  readonly status: "applied" | "conflict" | "failed";
+  readonly status: "applied" | "unchanged" | "conflict" | "failed" | "recovery-required";
   readonly changeId?: string;
   readonly diagnostics: readonly Diagnostic[];
 }
 
 export interface RollbackResult {
-  readonly status: "restored" | "conflict" | "failed";
+  readonly status: "restored" | "conflict" | "failed" | "recovery-required";
   readonly conflicts: readonly string[];
   readonly diagnostics: readonly Diagnostic[];
 }

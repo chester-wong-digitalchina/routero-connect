@@ -36,3 +36,8 @@ On 2026-11-18, the Windows credential service, token-only helper commands, and v
 
 Actual GUI and Windows reboot validation remain untested. This increment does not resolve Phase 2 or provide automatic setup. See [validation](phase-4-validation.md) and [credential guide](credentials.md). Next comes the safe configuration engine; a real adapter is still gated on successful live compatibility evidence.
 
+## Phase 5 configuration work
+
+On 2026-11-22, work on `phase-5` added a shared engine for previewing, applying, and restoring selected Codex TOML settings. It preserves unrelated text, detects conflicts, and keeps private recovery snapshots before replacement. Tests and the demo use only project-local dummy files; no live Codex settings, OS credentials, installed helper files, or gateway settings were changed.
+
+Existing uncommitted Phase 4 work was preserved on the new branch. This phase does not create a real client adapter or resolve the Phase 2 tool errors. See [configuration behavior and limitations](configuration-engine.md) and [Phase 5 validation](phase-5-validation.md). Phase 6 will connect the shared components into a CLI workflow after the necessary live compatibility gate is satisfied.
