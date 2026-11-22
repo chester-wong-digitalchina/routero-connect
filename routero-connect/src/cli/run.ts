@@ -14,15 +14,26 @@ Usage:
   routero-connect credential store --profile <id> --api-root <https-api-root> --replace
   routero-connect credential link --profile <new-id> --from-profile <owner-id> --api-root <https-api-root> --credential-ref <shared-id>
   routero-connect helper stage --destination <new-directory>
+  routero-connect models --codex <absolute-codex.exe> --profile <id> --api-root <https-api-root>
+  routero-connect connect --config <absolute-config.toml> --recovery <absolute-private-directory> --codex <absolute-codex.exe> --helper <absolute-helper-directory> --profile <id> --api-root <https-api-root> --model <id> [--replace-existing] [--allow-experimental] [--apply --expected-revision <preview-revision>]
+  routero-connect doctor --config <absolute-config.toml> --recovery <absolute-private-directory> --codex <absolute-codex.exe> --helper <absolute-helper-directory> [--online --profile <id> --api-root <https-api-root>]
+  routero-connect disconnect --config <absolute-config.toml> --recovery <absolute-private-directory> --change-id <uuid> [--apply]
+  routero-connect test-model --profile <id> --api-root <https-api-root> --model <id> --confirm-cost
   routero-connect --help
 
-No command makes network requests or changes client settings.
-Status, doctor, and validate-url are offline checks. Explicit credential commands
+Status, bare doctor, and validate-url make no network requests or client-setting changes.
+Explicit credential commands
 access Windows Credential Manager. Store reads one key from stdin, never argv.
 Credential print writes ONLY the token to stdout; it is intended for client helpers.
 Delete removes a profile reference and deletes the key only after its last owner.
 Helper stage copies this pinned bundle to an explicit new directory; no install/download.
-Connect and disconnect are not implemented yet.
+Models and connect list key-visible models; doctor does so only with --online.
+Connect previews by default; --apply requests a reviewed write. Compatibility is mandatory:
+the current bundled catalog has NO approved coding model, so connect leaves settings unchanged.
+Disconnect --apply restores one recovery transaction without deleting keys/helpers.
+Test model requires credit consent and makes one bounded text request, never a coding test.
+All workflow paths are explicit and absolute; no live settings are discovered automatically.
+Use --credential-ref <id> with profile-based workflow commands for a shared reference.
 Do not pass API keys or URLs containing credentials as command arguments.`;
 
 export function runCli(args: readonly string[], output: CliOutput): number {

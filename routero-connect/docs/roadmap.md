@@ -40,4 +40,10 @@ Actual GUI and Windows reboot validation remain untested. This increment does no
 
 On 2026-11-22, work on `phase-5` added a shared engine for previewing, applying, and restoring selected Codex TOML settings. It preserves unrelated text, detects conflicts, and keeps private recovery snapshots before replacement. Tests and the demo use only project-local dummy files; no live Codex settings, OS credentials, installed helper files, or gateway settings were changed.
 
-Existing uncommitted Phase 4 work was preserved on the new branch. This phase does not create a real client adapter or resolve the Phase 2 tool errors. See [configuration behavior and limitations](configuration-engine.md) and [Phase 5 validation](phase-5-validation.md). Phase 6 will connect the shared components into a CLI workflow after the necessary live compatibility gate is satisfied.
+Existing uncommitted Phase 4 work was preserved on the new branch. This phase does not create a real client adapter or resolve the Phase 2 tool errors. See [configuration behavior and limitations](configuration-engine.md) and [Phase 5 validation](phase-5-validation.md). Phase 6 subsequently adds the CLI workflow while retaining the live compatibility gate.
+
+## Phase 6 CLI work
+
+On 2026-11-23, branch `phase-6` was created from the separated Phase 5 commit. The adapter joins pinned client/helper inspection, compatibility and current model visibility, configuration preview/apply, model switching, local/online diagnostics, and transaction-based disconnect. A fixed text probe requires explicit credit consent and cannot promote model support. Apply requires the reviewed file revision; recovery retains keys/helpers and restores switches in reverse order.
+
+Implementation and isolated tests are available, but **Phase 6 acceptance remains incomplete**. The catalog still has no approved model, the Phase 2 coding failures have not been retested, and real coding/restart/metadata/billing acceptance remains pending. Installed helper 0.0.3 is unchanged; new helper staging uses 0.0.4, which also needs native release acceptance. No live settings, native credentials, installed helpers, or gateway files were changed during this increment. See [CLI instructions](codex-cli.md) and [validation](phase-6-validation.md). Phase 7 should reuse this behavior without bypassing its acceptance gate.

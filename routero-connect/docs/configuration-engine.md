@@ -71,6 +71,6 @@ If a write or verification fails after a commit may have started, the result is 
 
 `plan` is read-only and can report sanitized parser line/column information. `apply` returns `applied`, `unchanged`, `conflict`, `failed`, or `recovery-required`. `rollback` returns `restored`, `conflict`, `failed`, or `recovery-required`. A new engine instance can use the private recovery record; an apply plan itself cannot be persisted or reused.
 
-The shared adapter contracts now include unchanged and recovery-required outcomes so future client integration does not conceal uncertainty. No live adapter is implemented in Phase 5.
+The shared adapter contracts include unchanged and recovery-required outcomes so integration does not conceal uncertainty. Phase 6 now delegates to this engine through the [Codex CLI workflow](codex-cli.md), with compatibility approval and reviewed-revision checks. Phase 5's own validation remains fixture-only.
 
 Parser reference: [official source and AST API](https://github.com/ota-meshi/toml-eslint-parser). The dependency and integrity are pinned in the package manifest and lockfile; no parser update is fetched at runtime.

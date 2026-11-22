@@ -1,6 +1,6 @@
 # Shared foundations
 
-Phase 3 added shared foundations, Phase 4 added Windows credentials and a pinned helper, and Phase 5 adds a format-aware configuration engine. No phase claims the outstanding live coding compatibility tests have passed. Phase 5 writes only explicitly selected targets; the current demo/tests select project-local fixtures, not live client settings.
+Phase 3 added shared foundations, Phase 4 added Windows credentials, Phase 5 added the configuration engine, and Phase 6 joins them in the Codex CLI adapter. The outstanding live coding tests have not passed. Development validation selects project-local fixtures rather than live settings, and the production compatibility catalog still blocks activation.
 
 ## Code boundaries
 
@@ -9,11 +9,13 @@ Phase 3 added shared foundations, Phase 4 added Windows credentials and a pinned
 | `src/core/` | API-root validation, origin-bound profiles, compatibility decisions, redacted diagnostics, project readiness | No VS Code dependency, filesystem, network, credential-store implementation, or tool execution |
 | `src/cli/run.ts` | Parse the small offline command set and format shared-core results | No setup, discovery, inference, or configuration writes |
 | `src/cli/credentials.ts` | Explicit credential arguments and bounded stdin; token-only helper output | No secret arguments, gateway calls, or client settings |
+| `src/cli/codex.ts` | Explicit workflow arguments, reviewed revision, output and credit consent | No home discovery, compatibility bypass, or persistent profile registry |
+| `src/adapters/codex/` | Pinned detection, helper/config/auth checks, model permissions, Responses text probe, configuration-engine delegation | No client tool execution, automatic restart/retry, login deletion, or catalog promotion |
 | `src/credentials/` | Ownership-aware lifecycle, native Windows backend, safe helper staging | No plaintext fallback or implicit global installation |
 | `src/config/` | Source-preserving TOML edits, sealed previews, atomic writes, private recovery, three-way rollback | No credential-store access, model activation, home-directory discovery, or live adapter |
 | `src/cli/main.ts` | Process arguments, output streams, and exit codes | No raw exception or argument dumps |
 | `src/extension.ts` | VS Code commands, notifications, and opening the progress report | No duplicated URL/compatibility logic or inference |
-| `src/adapters/contracts.ts` | Future client detection, plans, apply, diagnostics, and rollback interfaces | No adapter or configuration writer is implemented yet |
+| `src/adapters/contracts.ts` | Shared client detection, plans, apply, diagnostics, and rollback interfaces | Implementations remain separate from the types |
 | `compatibility/models.json` | Versioned compatibility evidence maintained with tests and review | No keys, inferred limits, live catalog URL, or automatically trusted remote update |
 
 These boundaries live in the existing package. Splitting into independently published packages is deferred until distribution requires it; the core is already importable independently of VS Code.
@@ -53,4 +55,4 @@ Factories redact known secret values, Routero-style key strings, bearer/Basic au
 
 The future adapter contract separates `detect`, `plan`, `apply`, `diagnose`, and `rollback`. Plans describe target files, revision expectations, changed fields, redacted diffs, conflicts, and restart instructions. Results distinguish successful changes, conflicts, and failures. No file patch, backup, credential access, or rollback is implemented by these types.
 
-Phase 4 implements Windows Credential Manager storage and a version-pinned helper; see [credential design](credentials.md) and [validation](phase-4-validation.md). VS Code SecretStorage remains separate and will be used where applicable by future UI/provider work. Phase 5 now implements safe configuration editing and three-way rollback; see [the configuration guide](configuration-engine.md). Its manifests contain no field values, and recovery snapshots require private storage. The engine is not wired into the production CLI setup flow until the client adapter is implemented. A real client adapter must still pass the outstanding live compatibility gate before it can be advertised as working.
+Phase 4 implements Windows Credential Manager storage and a version-pinned helper; see [credential design](credentials.md) and [validation](phase-4-validation.md). VS Code SecretStorage remains separate. Phase 5 implements configuration editing and three-way rollback; see [the configuration guide](configuration-engine.md). Phase 6 delegates to that engine and re-evaluates compatibility rather than trusting caller-supplied approval. Before apply it rechecks client/helper/permissions; the CLI additionally requires the reviewed file revision. Recovery needs no client/helper or gateway access and retains credentials. See [CLI behavior](codex-cli.md). The outstanding live gate still prevents advertising a supported coding workflow.

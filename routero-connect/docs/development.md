@@ -80,6 +80,12 @@ npm run demo:config
 
 The tests use explicit fixture paths under ignored `out/`; the demo uses ignored `tmp/validation/`. Windows ACL commands and all test recovery files are confined to these selected fixture locations. Do not run the opt-in Phase 4 native credential test as part of Phase 5: it is unrelated and writes the OS credential store.
 
-The engine is a reusable source component in `src/config/`, checked by TypeScript and unit tests. It is not a new production config-write command or a separately published package. Future CLI/VS Code adapters will import it; `npm run package` still builds the existing extension/CLI entry points. The demo runs the compiled library from `out/` after test compilation.
+The engine is a reusable source component in `src/config/`, checked by TypeScript and unit tests. Phase 6 now imports it into the CLI adapter; it remains separate from the VS Code wizard and is not independently published. `npm run package` builds the extension/CLI entry points. The demo runs the compiled library from `out/` after test compilation.
 
 Read [configuration safety and limits](configuration-engine.md) before integrating `plan`, `apply`, or `rollback`. A plan is in-memory/single-use; durable rollback uses a private transaction record. The fixture-only recovery exception must never become a production default. Stable-version client compatibility and credential handling still require their separate checks.
+
+## Phase 6 adapter validation
+
+`npm test` includes synthetic adapter lifecycle tests, mocked HTTP transport, CLI argument/revision/credit checks, helper-integrity inspection, cancellation, and timeout coverage. Synthetic compatibility rows live only in test fixtures and must never be added to the production catalog. These tests use project-local dummy files, private fixture backups, and fake credential readers; they do not access the actual Windows vault, launch Codex, or call Routero.
+
+The production CLI bundles the reviewed `compatibility/models.json`; there is no command-line catalog override or approval bypass. Every real combination remains blocked until its evidence is reviewed. Read the [CLI guide](codex-cli.md) before requesting isolated live acceptance. Do not rerun the opt-in Phase 4 native store/install test as a routine regression check. Newly staged helper version 0.0.4 needs its own native acceptance before release; installed 0.0.3 remains untouched.

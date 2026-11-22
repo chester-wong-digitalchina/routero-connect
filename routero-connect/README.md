@@ -4,11 +4,11 @@ Routero Connect is an incremental VS Code extension and planned companion CLI fo
 
 ## Current status
 
-**Phase 5 adds a tested configuration engine for previewing changes, preserving existing settings, and restoring managed fields safely. It has only been exercised on project-local dummy files; your live Codex configuration has not been changed.**
+**Phase 6 adds the Codex CLI workflow: local diagnostics, explicit model listing/testing, guarded connection previews/application, and transaction-based disconnect. No coding model is approved yet, so normal connection remains blocked and existing settings are preserved.**
 
-The engine detects changes made after a preview and keeps later user edits when rolling back. It also keeps private recovery files before replacing a configuration. This is a shared component for the future setup flow, not an automatic Connect/Disconnect feature. See [how configuration changes work](docs/configuration-engine.md).
+The workflow joins the credential helper and configuration engine without treating a basic text reply as proof of coding support. Isolated tests cover connection, model switching, and recovery; your live Codex configuration and credentials were not changed. See the [CLI guide](docs/codex-cli.md) and [configuration recovery guide](docs/configuration-engine.md).
 
-Phase 4's explicit Windows credential commands and pinned helper remain available. They are separate from configuration editing; neither credentials nor configuration changes prove that a model can complete a coding task.
+Phase 4's explicit Windows credential commands remain available. Installed helper 0.0.3 is retained; new staging uses a separate 0.0.4 path. No helper update or global installation happens automatically.
 
 The user can obtain simple replies through Routero, but current coding tests stop before or after a file read. No complete coding workflow has passed. The cause remains unconfirmed; Phase 3 does not fix, bypass, or relabel those failures. See the [progress report](compatibility-report.md).
 
@@ -39,7 +39,13 @@ node dist/cli.js doctor
 npm run demo:config
 ```
 
-The demo creates a dummy file under ignored `tmp/validation/`, prints a redacted preview, applies fixture settings, then shows how rollback preserves a simulated later edit. An expected rollback conflict demonstrates safe behavior. It does not use your live settings, credentials, or gateway. There is no production config-write CLI command yet; the client adapter comes in Phase 6.
+The demo creates a dummy file under ignored `tmp/validation/`, prints a redacted preview, applies fixture settings, then shows how rollback preserves a simulated later edit. An expected rollback conflict demonstrates safe behavior. It does not use your live settings, credentials, or gateway. The Phase 6 CLI separately enforces compatibility before connecting; the demo is not a way to activate an unverified model.
+
+## Codex CLI workflow
+
+Run `node dist/cli.js --help` for explicit-path commands. Local `doctor` does not access credentials or the gateway. `models` and `doctor --online` explicitly list the selected key's model access without inference. `test-model` requires a credit notice and `--confirm-cost` before one bounded text request; it cannot approve a coding workflow.
+
+`connect` previews by default. Apply requires the reviewed revision and explicit replacement consent for existing values; unsupported combinations leave settings unchanged. `disconnect` restores one managed transaction while preserving later edits and retaining credentials/helpers. See the [CLI instructions](docs/codex-cli.md) for exact prerequisites, limitations, restart, model-switch order, and recovery. Phase 6's full live acceptance remains pending.
 
 ## Development
 
@@ -56,7 +62,7 @@ Read [development instructions](docs/development.md), [architecture](docs/archit
 
 - Gateway repository access is read-only. Source and test artifacts stay inside this project; native store/installation checks require explicit authorization.
 - No API keys belong in repository files, subprocess arguments, logs, fixtures, or documentation.
-- Phase 4 implements external credential storage and helper staging. A safe configuration engine is now available as a library/demo; persistent profiles and real client adapters remain later work. User-level Codex settings stay untouched.
+- The CLI adapter is implemented with compatibility checks; persistent profile management and the VS Code wizard remain later work. Development validation uses project-local fixtures. User-level Codex settings stay untouched.
 - An approved native test installed helper 0.0.3 under the current user's local app-data directory and created/removed one dummy Windows credential. No supplied real key was stored. Other development files stay inside this project.
 - Live inference requires an explicit test action. The authorized aggregate testing ceiling is $10 across both UAT keys; server-side enforcement and reliable usage visibility are still unconfirmed.
 - Claude Code, native VS Code Chat, guided clients, and other platforms are planned, not implemented.

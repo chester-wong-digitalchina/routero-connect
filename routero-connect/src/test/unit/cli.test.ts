@@ -11,7 +11,7 @@ function invoke(args: readonly string[]) {
 
 test("CLI help and status are honest about unavailable setup", () => {
   assert.equal(invoke([]).exitCode, 0);
-  assert.match(invoke(["--help"]).stdout, /No command makes network requests/u);
+  assert.match(invoke(["--help"]).stdout, /bare doctor, and validate-url make no network requests/u);
   assert.match(invoke(["status"]).stdout, /not yet verified/u);
 });
 

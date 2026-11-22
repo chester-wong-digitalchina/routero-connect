@@ -1,6 +1,6 @@
 import { createDiagnostic, type Diagnostic } from "./diagnostics";
 
-export const READINESS_MESSAGE = "Shared foundations and Windows credential commands are available. Codex coding compatibility is not yet verified; automatic setup is unavailable.";
+export const READINESS_MESSAGE = "Windows credentials, safe configuration editing, and a gated Codex CLI workflow are available. Codex coding compatibility is not yet verified; the bundled catalog permits no model activation.";
 
 /** Offline project readiness; never represents a live connection test. */
 export function projectDiagnostics(): readonly Diagnostic[] {

@@ -1,6 +1,6 @@
 # Project progress and compatibility
 
-Last updated: 2026-11-22 (Asia/Singapore).
+Last updated: 2026-11-23 (Asia/Singapore).
 
 ## Where the project stands
 
@@ -25,6 +25,12 @@ No supplied real key was stored, no client settings changed, and no live model r
 The project can now prepare a redacted configuration preview, apply reviewed field changes, and restore the fields it managed while retaining later user edits. It creates private recovery records and reports conflicts rather than silently overwriting them. The engine and demonstration have used dummy files inside the project only; your live Codex configuration has not been changed.
 
 This is preparation for the real setup workflow. There is not yet a production configuration command or client adapter, and the earlier live coding failures have not been retested or reclassified. See [the configuration guide](docs/configuration-engine.md) and [Phase 5 validation](docs/phase-5-validation.md).
+
+## What Phase 6 adds
+
+Phase 6 adds the CLI adapter and workflow commands. Local diagnostics, explicit key-visible model listing, preview/apply checks, model switching, and recovery are implemented. A small text probe is available only with explicit credit consent; it does not approve compatibility. The production catalog still has no approved coding model, so connect refuses activation. Synthetic adapter tests are not real gateway evidence.
+
+No supplied key, live settings, installed helper, or gateway configuration was changed during this increment. There were no live inference requests or test charges. Helper staging now uses a new 0.0.4 path; existing 0.0.3 remains accepted. Full Phase 6 acceptance still needs a real read/edit/test/follow-up run, model metadata/context checks, restart, and recorded billing evidence. See the [CLI guide](docs/codex-cli.md) and [Phase 6 validation](docs/phase-6-validation.md).
 
 ## What the tests show
 
