@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17T17:39:13.238Z",
+  "helperVersion": "0.0.3",
+  "helperSha256": "b0e4ca1f7e1b9edaaf1b14a1fda64b08d8e11a707ca23456bcdba9994e472beb",
+  "nativeLifecycle": true,
+  "restartPrint": true,
+  "codex": [
+    {
+      "label": "standalone",
+      "version": "codex-cli 0.157.1",
+      "commandAuthPassed": true,
+      "expectedStatus": 418,
+      "exitCode": 1,
+      "requests": 1,
+      "tokenMatched": true
+    },
+    {
+      "label": "ide-bundled",
+      "version": "codex-cli 0.169.0-alpha.11.1",
+      "commandAuthPassed": true,
+      "expectedStatus": 418,
+      "exitCode": 1,
+      "requests": 1,
+      "tokenMatched": true
+    }
+  ],
+  "cleanup": true,
+  "installedHelper": false,
+  "usedInstalledHelper": true,
+  "inferenceRequests": 0,
+  "costUsd": 0,
+  "stage": "passed",
+  "clientScope": "Standalone CLI and IDE-bundled engines on loopback; not actual GUI or live gateway acceptance.",
+  "installation": "LOCALAPPDATA/RouteroConnect/helper/0.0.3; Node executable is pinned in its local manifest. Working 0.0.2 retained for rollback.",
+  "attemptHistory": [
+    {
+      "date": "2026-11-17T17:20:09.546Z",
+      "helperVersion": "0.0.1",
+      "nativeLifecycle": false,
+      "restartPrint": false,
+      "cleanup": false,
+      "installedHelper": true,
+      "stage": "native-lifecycle",
+      "failure": "store-unavailable"
+    },
+    {
+      "date": "2026-11-17T17:23:42.403Z",
+      "helperVersion": "0.0.2",
+      "nativeLifecycle": true,
+      "restartPrint": true,
+      "cleanup": true,
+      "installedHelper": true,
+      "stage": "passed"
+    },
+    {
+      "date": "2026-11-17T17:31:15.275Z",
+      "helperVersion": "0.0.3",
+      "nativeLifecycle": true,
+      "restartPrint": true,
+      "cleanup": true,
+      "installedHelper": true,
+      "stage": "codex-ide-bundled",
+      "failure": "integration-check-failed"
+    },
+    {
+      "date": "2026-11-17T17:33:36.303Z",
+      "helperVersion": "0.0.3",
+      "nativeLifecycle": false,
+      "restartPrint": false,
+      "cleanup": true,
+      "installedHelper": false,
+      "stage": "native-lifecycle",
+      "failure": "store-unavailable"
+    },
+    {
+      "date": "2026-11-17T17:36:34.485Z",
+      "helperVersion": "0.0.3",
+      "nativeLifecycle": true,
+      "restartPrint": true,
+      "cleanup": true,
+      "installedHelper": false,
+      "stage": "passed"
+    },
+    {
+      "date": "2026-11-17T17:39:13.238Z",
+      "helperVersion": "0.0.3",
+      "nativeLifecycle": true,
+      "restartPrint": true,
+      "cleanup": true,
+      "installedHelper": false,
+      "usedInstalledHelper": true,
+      "stage": "passed"
+    }
+  ],
+  "historyNotes": [
+    "0.0.1 failed static compilation before its credential request could be processed; failed helper files were archived and removed.",
+    "0.0.2 passed both engines and remains as an older pinned version.",
+    "An initial 0.0.3 installed-path IDE attempt failed without enough detail to assign a cause. The identical hash later passed from a project-local path and the existing installed path.",
+    "Sandboxed native access was rejected; approved host-context testing passed. No plaintext fallback was used."
+  ],
+  "notTested": [
+    "Windows reboot",
+    "actual VS Code GUI authentication",
+    "live Routero inference",
+    "all Windows account/policy variants",
+    "public package/VSIX installation"
+  ]
+}
