@@ -2,7 +2,7 @@
   "name": "routero-connect",
   "displayName": "Routero Connect",
   "description": "Connect VS Code and supported AI coding agents to Routero, enabling secure API key management, model selection, automated configuration, and connection diagnostics.",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.146.0",
     "node": ">=24.18.0 <25",
@@ -22,6 +22,26 @@
       {
         "command": "routero.integrationStatus",
         "title": "Routero: Integration Status"
+      },
+      {
+        "command": "routero.doctor",
+        "title": "Routero: Doctor"
+      },
+      {
+        "command": "routero.testModel",
+        "title": "Routero: Test Model"
+      },
+      {
+        "command": "routero.disconnect",
+        "title": "Routero: Disconnect"
+      },
+      {
+        "command": "routero.storeCredential",
+        "title": "Routero: Store Key for Codex"
+      },
+      {
+        "command": "routero.stageHelper",
+        "title": "Routero: Stage Codex Credential Helper"
       }
     ]
   },
@@ -41,7 +61,9 @@
     "test:unit": "npm run compile-tests && node --test \"out/test/unit/*.test.js\"",
     "test:vscode": "npm run compile-tests && npm run compile && vscode-test",
     "cli": "node dist/cli.js",
-    "demo:config": "npm run compile-tests && node out/test/manual/config-engine-demo.js"
+    "demo:config": "npm run compile-tests && node out/test/manual/config-engine-demo.js",
+    "package:internal": "node scripts/package-internal.cjs",
+    "test:installed": "npm run compile-tests && node scripts/test-installed.cjs"
   },
   "devDependencies": {
     "@types/mocha": "10.0.10",
@@ -49,11 +71,13 @@
     "@types/vscode": "1.146.0",
     "@vscode/test-cli": "0.0.15",
     "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.1.1",
     "esbuild": "0.28.2",
     "eslint": "10.15.0",
     "npm-run-all": "4.1.5",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.72.2"
+    "typescript-eslint": "8.72.2",
+    "yauzl": "3.4.0"
   },
   "overrides": {
     "diff": "^8.0.4",
@@ -65,5 +89,23 @@
   },
   "dependencies": {
     "toml-eslint-parser": "1.0.3"
+  },
+  "publisher": "routero-internal",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chester-wong-digitalchina/routero-connect.git"
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Setup changes client configuration and accesses credentials only in trusted local Windows workspaces."
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
   }
 }

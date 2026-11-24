@@ -2,6 +2,8 @@
 
 Phase 4 adds an explicit way to store a Routero key on Windows and let a client retrieve it later. It does not change Codex settings, solve the Phase 2 tool errors, or make automatic connection available.
 
+Phase 7 adds explicit masked key entry and helper staging in VS Code through the same external CLI. It uses a selected Node executable, not the Electron host or an assumption that Codex can access SecretStorage. New bundles stage at **0.0.5**; existing 0.0.3/0.0.4 helpers remain accepted and untouched. See [the VS Code guide](vscode-setup.md) for consent, storage lifetime and release limitations; historical validation below still describes the versions actually tested in those phases.
+
 ## What is stored where
 
 The external CLI/helper uses **Windows Credential Manager**, through the Windows `CredReadW`, `CredWriteW`, and `CredDeleteW` APIs. Entries are generic credentials persisted for the current Windows user on this machine. No plaintext key file, environment-variable fallback, dashboard session, or global `OPENAI_API_KEY` change is used.

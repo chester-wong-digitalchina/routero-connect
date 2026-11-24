@@ -1,8 +1,12 @@
 # Codex CLI manual acceptance blockers
 
-Reported: 2026-11-17 (Asia/Singapore). Evidence: three user-supplied terminal screenshots and accompanying user reports, not independently captured gateway traces. Client: Codex CLI `0.157.1`, Windows, disposable `calculator-cli` project, Routero UAT profile reported by the user. Actual deployed revision, selected key, policy state, and billed cost are not confirmed.
+> Historical evidence: this record preserves the observed combination and original verification scope. See the [maintainer handoff](../handoff.md) for the current status and subsequent validation.
+
+Reported: 2026-11-17 (Asia/Singapore). Evidence: three recorded terminal screenshots and accompanying user reports, not independently captured gateway traces. Client: Codex CLI `0.157.1`, Windows, disposable `calculator-cli` project, Routero UAT profile identified in the test report. Actual deployed revision, selected key, policy state, and billed cost are not confirmed.
 
 ## Plain-language summary
+
+Update, 2026-11-24: a manual Codex 0.172.0 retest reproduces the post-read failure, and new dashboard evidence shows an independent JSON-mode rejection for a task-title request. Local session inspection confirms a matching tool result exists, with an intervening assistant message. See [the newer finding](codex-01720-uat-blockers.md); the historical evidence below remains unchanged and does not establish gateway responsibility by itself.
 
 Simple text replies work. In the latest smaller DeepSeek test, Codex read one file but could not finish explaining it. The failure therefore does not require editing files, running tests, or the earlier failed file search. GPT-4o stopped earlier, before visible file work. The full coding workflow remains unverified, and the cause has not been assigned to a particular component.
 
@@ -32,11 +36,11 @@ Maintainer check: compare the original Responses input with the reconstructed up
 
 ## Smaller DeepSeek reproduction
 
-A third screenshot shows `Reply with exactly the word READY.` returning `READY`. In the same conversation, the next prompt asked only to read and explain `calculator.py`, explicitly excluding edits and test execution. Codex displayed the file read, then failed with the same insufficient-tool-results error. The selected DeepSeek model is reported by the user context, not visible in that screenshot.
+A third screenshot shows `Reply with exactly the word READY.` returning `READY`. In the same conversation, the next prompt asked only to read and explain `calculator.py`, explicitly excluding edits and test execution. Codex displayed the file read, then failed with the same insufficient-tool-results error. The selected DeepSeek model is identified in the accompanying test report, not visible in that screenshot.
 
 No edit, test run, or unsuccessful `AGENTS.md` search is shown in this smaller reproduction. Those actions are not necessary to reproduce the failure in this conversation. The screenshot does not establish a fresh-conversation reproduction, complete wire-level tool output, or the responsible component.
 
-The user reports that restoring the earlier configuration still allowed simple text replies but did not restore the coding workflow. This weakens the hypothesis that the newly suggested profile alone caused the problem, but does not rule out all configuration differences. A regression since earlier successful use is possible, not confirmed; matching earlier client/model/configuration/deployment evidence is still needed.
+The manual test report states that restoring the earlier configuration still allowed simple text replies but did not restore the coding workflow. This weakens the hypothesis that the newly suggested profile alone caused the problem, but does not rule out all configuration differences. A regression since earlier successful use is possible, not confirmed; matching earlier client/model/configuration/deployment evidence is still needed.
 
 ## Acceptance outcome and next action
 
@@ -45,4 +49,4 @@ The user reports that restoring the earlier configuration still allowed simple t
 - Stop repeated manual retries. Use maintainer assistance to compare original client requests with the translated messages and the previously working setup. Responsibility is not assigned to the gateway in advance; request sanitized traces or a confirmed supported configuration. Do not edit the gateway repository or publish a backend issue without explicit instruction.
 - Copy request IDs from the original terminal or gateway logs rather than transcribing screenshots. The earlier conversational transcription of a DeepSeek ID was not reliable and is not retained as evidence here.
 - Retest only after a specific fix, supported configuration, or validated alternative is identified. Keep the CLI and IDE gates separate.
-- Agent-run inference spend remains $0; user-run request count and cost are unknown. The aggregate authorized testing ceiling remains $10.
+- Local baseline inference spend remains $0; manual request count and cost are unknown. The aggregate authorized testing ceiling remains $10.

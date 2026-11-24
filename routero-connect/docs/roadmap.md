@@ -1,5 +1,11 @@
 # Incremental implementation roadmap
 
+## Current handoff status
+
+The 0.0.5 shared-controller setup and native Luna coding/continuation task pass for the isolated Windows/Codex 0.172.0/UAT combination. Ordinary model approval, fresh-install GUI acceptance, broader lifecycle/recovery and Codex IDE support remain open. Continue with the ordered acceptance work in the [maintainer handoff](handoff.md); this is not a completed production plugin.
+
+The phase table below remains the implementation plan. Dated progress sections preserve the state at each checkpoint, including earlier failures and version numbers; they are not the latest support matrix.
+
 | Phase                       | Deliverable                                                                                                       | Gate                                                                                     |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | 1. Gateway assessment       | Pinned source findings, integration contract, initial unverified compatibility report, honest extension readiness | Source conclusions distinguish deployment and historical evidence; project build passes  |
@@ -12,11 +18,11 @@
 | 8. Hardening                | Restrictions, key lifecycle, budget errors, update/recovery checks                                                | Support matrix, regression results and explicit limitations                              |
 | 9. Expansion                | Claude Code, guided clients, native Chat and additional platforms as separate increments                          | Each feature passes its own protocol/client gate                                         |
 
-Phase 1 is complete as a source assessment; live compatibility remains pending. No gateway, user settings, policy, credential, or external project writes are part of Phase 1. All current writes must stay inside this project. Later phases must respect that boundary unless the user explicitly changes it.
+Phase 1 is complete as a source assessment; live compatibility remains pending. No gateway, user settings, policy, credential, or external project writes are part of Phase 1. All current writes must stay inside this project. Later phases must respect that boundary unless a separately authorized setup action extends it.
 
-## Current progress
+## Historical progress checkpoints
 
-Phase 2 began on 2026-11-16. The project can list available models, and local checks of the proposed sign-in method passed. The user can also obtain ordinary text replies through Routero.
+Phase 2 began on 2026-11-16. The project can list available models, and local checks of the proposed sign-in method passed. The manual test also obtained ordinary text replies through Routero.
 
 On 2026-11-17, manual coding tests did not complete. GPT-4o stopped before visible file work. DeepSeek opened files, but the request after a read failed. A smaller test showed the same problem when only reading and explaining one file; editing and running tests were not required.
 
@@ -47,3 +53,9 @@ Existing uncommitted Phase 4 work was preserved on the new branch. This phase do
 On 2026-11-23, branch `phase-6` was created from the separated Phase 5 commit. The adapter joins pinned client/helper inspection, compatibility and current model visibility, configuration preview/apply, model switching, local/online diagnostics, and transaction-based disconnect. A fixed text probe requires explicit credit consent and cannot promote model support. Apply requires the reviewed file revision; recovery retains keys/helpers and restores switches in reverse order.
 
 Implementation and isolated tests are available, but **Phase 6 acceptance remains incomplete**. The catalog still has no approved model, the Phase 2 coding failures have not been retested, and real coding/restart/metadata/billing acceptance remains pending. Installed helper 0.0.3 is unchanged; new helper staging uses 0.0.4, which also needs native release acceptance. No live settings, native credentials, installed helpers, or gateway files were changed during this increment. See [CLI instructions](codex-cli.md) and [validation](phase-6-validation.md). Phase 7 should reuse this behavior without bypassing its acceptance gate.
+
+## Phase 7 native controls and internal artifacts
+
+On 2026-11-24, branch `phase-7` was created from committed Phase 6. Native VS Code controls now delegate to the shared CLI, including masked stdin key transfer, model/support selection, previews with revision checks, explicit credit consent, local/online diagnostics, and recovery. Internal 0.0.2 VSIX and standalone CLI artifacts have allowlisted contents and hash records. The wizard uses an external Node executable rather than the Electron host.
+
+The end-to-end connection goal remains blocked: no coding model is approved, the historical tool failures are unresolved, and the Codex IDE adapter/acceptance remain separate pending work. Connect refuses rather than bypassing those checks. See [installation and usage](vscode-setup.md) and [the validation record and remaining work](phase-7-validation.md). Normal user settings, native credentials, installed helpers, and gateway files remain unchanged by development.

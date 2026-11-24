@@ -1,14 +1,14 @@
 # Safe configuration changes
 
-Phase 5 adds a configuration engine: the part that can prepare a change, apply it carefully, and later restore the settings it managed. It is tested against dummy Codex files inside this project. **It has not changed your live Codex configuration, and it does not make the Phase 2 coding workflow pass.**
+The configuration engine prepares reviewed changes, writes private recovery before replacement, and restores only unchanged managed fields. The CLI adapter and VS Code setup controller both use this engine; neither has a separate configuration writer. The isolated Luna setup now passes a real coding/continuation task, while normal Codex configuration remains unchanged. See [current handoff status](handoff.md).
 
 ## What this makes possible
 
-Future setup can show which settings will change before applying them. Existing settings and comments stay in place instead of being replaced with an example configuration. If the file changed after the preview, the engine asks for a new plan. When restoring settings, it keeps later user edits and reports anything it cannot restore safely.
+Setup shows which settings will change before applying them. Existing settings and comments stay in place instead of being replaced with an example configuration. If the file changed after the preview, the engine asks for a new plan. When restoring settings, it keeps later user edits and reports anything it cannot restore safely.
 
-This is a reusable code component, not a new Connect/Disconnect command. The real client adapter and user interface will connect these pieces in later phases. Model eligibility, credentials, executable installation, and a working gateway connection are separate checks.
+This reusable component is connected to the CLI adapter and VS Code Connect/Disconnect controls. Model eligibility, credentials, executable installation, and a working gateway connection are separate checks.
 
-## Try it without changing your settings
+## Try it without changing existing client settings
 
 From this repository:
 
@@ -16,7 +16,7 @@ From this repository:
 npm run demo:config
 ```
 
-Use `npm.cmd` if PowerShell blocks `npm.ps1`. The demo creates a dummy `config.toml` under ignored `tmp/validation/`, prints a redacted preview, applies fixture settings, simulates a later user edit, and demonstrates a rollback conflict that preserves that edit. It does not select your home directory, run Codex, access the credential store, or contact Routero. An expected conflict in this demo is a successful safety check, not a failed real connection.
+Use `npm.cmd` if PowerShell blocks `npm.ps1`. The demo creates a dummy `config.toml` under ignored `tmp/validation/`, prints a redacted preview, applies fixture settings, simulates a later user edit, and demonstrates a rollback conflict that preserves that edit. It does not select the live user home directory, run Codex, access the credential store, or contact Routero. An expected conflict in this demo is a successful safety check, not a failed real connection.
 
 ## How changes work
 
@@ -27,7 +27,7 @@ Use `npm.cmd` if PowerShell blocks `npm.ps1`. The demo creates a dummy `config.t
 5. **Apply and verify.** The engine re-reads the target, writes and flushes a same-directory temporary file, preserves existing file permissions, rechecks the target immediately before replacement, renames atomically, and re-parses the result. A mismatch or uncertain failure keeps recovery evidence rather than blindly restoring over possible user edits.
 6. **Restore carefully.** Rollback compares original, tool-written, and current values. It restores matching fields, leaves changed fields alone, and records unresolved conflicts for a later reviewed attempt. Changes inside a managed value, including new comments or formatting, are treated conservatively as user edits.
 
-If the tool created a provider table and the user later adds settings or changes its header, rollback retains its dependent managed fields and reports a conflict. It does not remove the surrounding structure and leave the user's new settings without it. Empty table headers created by the tool can otherwise be removed; existing headers and comments are retained.
+If the tool created a provider table and later edits add settings or change its header, rollback retains its dependent managed fields and reports a conflict. It does not remove the surrounding structure and leave the newly added settings without it. Empty table headers created by the tool can otherwise be removed; existing headers and comments are retained.
 
 Applying the same desired settings again returns `unchanged` and creates no new recovery transaction. Rollback of an already restored transaction is also harmless. A newly created configuration file is retained as an empty/whitespace file after full rollback rather than deleted, so later user content is not put at risk.
 

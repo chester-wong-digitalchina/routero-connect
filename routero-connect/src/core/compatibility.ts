@@ -183,7 +183,7 @@ export function parseCompatibilityCatalog(value: unknown): CompatibilityCatalog 
 export interface ActivationDecision {
   readonly allowed: boolean;
   readonly status: CompatibilityStatus;
-  readonly reason: "verified" | "experimental-opt-in" | "model-not-visible" | "no-matching-evidence" | "ambiguous-evidence" | "validation-required" | "unsupported" | "opt-in-required" | "capabilities-incomplete";
+  readonly reason: "verified" | "experimental-opt-in" | "isolated-validation-opt-in" | "model-not-visible" | "no-matching-evidence" | "ambiguous-evidence" | "validation-required" | "unsupported" | "opt-in-required" | "capabilities-incomplete";
   readonly recordId?: string;
 }
 

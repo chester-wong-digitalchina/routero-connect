@@ -1,5 +1,7 @@
 # Phase 6 CLI validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Updated: 2026-11-23 (Asia/Singapore). Branch: `phase-6`, created from Phase 5 commit `ac73c00`. Scope: [GitHub issue #5](https://github.com/chester-wong-digitalchina/routero-connect/issues/5), fetched read-only.
 
 ## What works in this increment

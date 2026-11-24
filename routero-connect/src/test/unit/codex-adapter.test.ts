@@ -10,6 +10,7 @@ import { bundledCatalog } from "../../cli/codex";
 import { parseDocument, fieldFingerprint, valueFingerprint } from "../../config/toml";
 import { inspectHelper, assertCleanEnvironment } from "../../adapters/codex/runtime";
 import { stageHelper } from "../../credentials/stage-helper";
+import { CODEX_CLI_VERSIONS, isInspectedCodexVersion } from "../../core/codex-versions";
 
 
 const profile = createConnectionProfile({ id: "fixture", name: "Fixture", apiRoot: "https://fixture.invalid", credential: createCredentialReference("fixture", "https://fixture.invalid") });
@@ -87,6 +88,30 @@ test("unknown clients and invisible models are refused", async () => {
   await assert.rejects(f.adapter.plan(input()), CodexWorkflowError);
   const adapter = new CodexCliAdapter(f.options, { ...f.dependencies, detect: async () => ({ client: "codex-cli", installed: true, version: "0.158.0" }) });
   await assert.rejects(adapter.plan(input()), (e: unknown) => e instanceof CodexWorkflowError && e.code === "client-version");
+});
+
+test("apply refuses a different canonical Codex executable even at the same version", async () => {
+  const f = await fixture();
+  let executablePath = f.options.executable;
+  const adapter = new CodexCliAdapter(f.options, { ...f.dependencies, detect: async () => ({ client: "codex-cli", installed: true, version: "0.157.1", executablePath }) });
+  const plan = await adapter.plan(input());
+  executablePath = join(f.root, "another-release", "codex.exe");
+  const result = await adapter.apply(plan);
+  assert.equal(result.status, "failed");
+  assert.ok(JSON.stringify(result).includes("client-changed"));
+  assert.equal(await readFile(f.file, "utf8"), original);
+});
+
+test("inspected 0.172.0 uses its exact evidence range without permitting other versions", async () => {
+  const f = await fixture();
+  const catalog = { ...fixtureCatalog(), records: fixtureCatalog().records.map((row) => ({ ...row, clientVersions: { minimum: "0.172.0", maximumExclusive: "0.172.1" } })) };
+  const adapter = new CodexCliAdapter(f.options, { ...f.dependencies, catalog, detect: async () => ({ client: "codex-cli", installed: true, version: "0.172.0" }) });
+  const plan = await adapter.plan(input());
+  assert.ok(plan.files[0].changedFields.includes("model_providers.routero.auth.command"));
+  assert.equal(await readFile(f.file, "utf8"), original);
+  assert.deepEqual(CODEX_CLI_VERSIONS, ["0.157.1", "0.172.0"]);
+  assert.equal(isInspectedCodexVersion("0.172.1"), false);
+  assert.equal(isInspectedCodexVersion("0.172.0-alpha.1"), false);
 });
 
 test("unsupported authentication/profile/feature overrides are preserved and refused", async () => {

@@ -30,6 +30,14 @@ test("invalid, oversized, secret-bearing, duplicate and malformed lists fail clo
   await assert.rejects(gateway(() => new Response("x".repeat(1024 * 1024 + 1))).service.listModels(profile), CodexWorkflowError);
 });
 
+test("printable unsupported aliases do not block valid IDs and produce a count-only warning", async () => {
+  const f = gateway(() => Response.json({ data: [{ id: "fixture/one" }, { id: "Auto Router" }, { id: "another alias" }] }));
+  assert.deepEqual(await f.service.listModels(profile), ["fixture/one"]);
+  assert.equal(f.service.listingDiagnostics()[0].code, "unsupported-model-aliases");
+  assert.deepEqual(f.service.listingDiagnostics()[0].details, { excludedCount: 2 });
+  assert.ok(!JSON.stringify(f.service.listingDiagnostics()).includes("Auto Router"));
+});
+
 test("HTTP failures are categorized without printing bodies or retrying", async () => {
   for (const [status, code] of [[401, "authentication"], [403, "access-denied"], [404, "route-or-model"], [429, "limit-unknown"], [500, "server-failure"]] as const) {
     const f = gateway(() => new Response(token, { status }));

@@ -1,9 +1,11 @@
 import { createDiagnostic, type Diagnostic } from "../../core/diagnostics";
 
 const MESSAGES = {
+  "client-changed": "The selected Codex release changed after preview. Review the new executable/version and create a fresh plan.",
+  "validation-isolation": "Isolated validation requires an absolute directory named codex-plugin-validation and its codex-home/config.toml target. Normal client configuration is not an allowed validation target.",
   "invalid-arguments": "Invalid Codex workflow arguments. Use --help; never pass a key as an argument.",
   "client-unavailable": "Select an existing absolute codex.exe path. No PATH or shell wrapper is used.",
-  "client-version": "Only Codex CLI 0.157.1 has pinned authentication evidence. Other versions require separate validation.",
+  "client-version": "Codex CLI 0.157.1 and 0.172.0 have recorded command-auth checks. Select one of these exact versions; model and lifecycle approval remain separate.",
   "helper-unavailable": "The pinned helper or its manifest failed validation. Review its path, version, permissions, and hash; do not overwrite an installed helper.",
   "environment-conflict": "Authentication or Codex override environment variables are set. Start a clean terminal without these overrides; existing login files were left intact.",
   "configuration-conflict": "The selected configuration contains authentication, profile, or feature overrides this adapter cannot safely combine. Review the configuration without deleting existing login data.",

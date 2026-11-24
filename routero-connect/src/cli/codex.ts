@@ -1,4 +1,4 @@
-import { dirname, isAbsolute } from "node:path";
+import { basename, dirname, isAbsolute, resolve } from "node:path";
 import type { CliOutput } from "./run";
 import { createConnectionProfile, createCredentialReference } from "../core/profiles";
 import { evaluateActivation, parseCompatibilityCatalog } from "../core/compatibility";
@@ -8,6 +8,8 @@ import { CodexWorkflowError } from "../adapters/codex/errors";
 import { validChangeId } from "../config/history";
 import { assertCleanEnvironment, detectCodex } from "../adapters/codex/runtime";
 import { ConfigError } from "../config/errors";
+import { isInspectedCodexVersion } from "../core/codex-versions";
+import { CODING_VALIDATION_NOTICE, evaluateCodingValidation } from "../core/coding-validation";
 
 export const COST_NOTICE = "Test model sends one Responses request (up to 64 output tokens) and may consume credits. No retries or tool execution. This is not a coding compatibility test or a server-side dollar cap.";
 
@@ -20,8 +22,8 @@ export interface CodexCommand {
 const COMMON = ["--config", "--recovery", "--codex", "--helper"];
 const PROFILE = ["--profile", "--api-root", "--credential-ref"];
 const OPTIONS: Record<CommandName, { values: readonly string[]; flags: readonly string[]; required: readonly string[] }> = {
-  connect: { values: [...COMMON, ...PROFILE, "--model", "--expected-revision"], flags: ["--apply", "--replace-existing", "--allow-experimental"], required: [...COMMON, "--profile", "--api-root", "--model"] },
-  models: { values: ["--codex", ...PROFILE], flags: ["--allow-experimental"], required: ["--codex", "--profile", "--api-root"] },
+  connect: { values: [...COMMON, ...PROFILE, "--model", "--expected-revision", "--validation-root"], flags: ["--apply", "--replace-existing", "--allow-experimental", "--isolated-validation"], required: [...COMMON, "--profile", "--api-root", "--model"] },
+  models: { values: ["--codex", ...PROFILE, "--validation-root"], flags: ["--allow-experimental", "--isolated-validation"], required: ["--codex", "--profile", "--api-root"] },
   doctor: { values: [...COMMON, ...PROFILE], flags: ["--online"], required: COMMON },
   disconnect: { values: ["--config", "--recovery", "--change-id"], flags: ["--apply"], required: ["--config", "--recovery", "--change-id"] },
   "test-model": { values: [...PROFILE, "--model"], flags: ["--confirm-cost"], required: ["--profile", "--api-root", "--model"] },
@@ -52,6 +54,8 @@ export function parseCodexCommand(args: readonly string[]): CodexCommand {
   if (name === "disconnect" && !validChangeId(values.get("--change-id")!)) { throw new CodexWorkflowError("invalid-arguments"); }
   if (name === "doctor" && flags.has("--online") && (!values.has("--profile") || !values.has("--api-root"))) { throw new CodexWorkflowError("invalid-arguments"); }
   if (name === "connect" && ((flags.has("--apply") && !values.has("--expected-revision")) || (values.has("--expected-revision") && !/^(?:absent|[a-f0-9]{64})$/u.test(values.get("--expected-revision")!)))) { throw new CodexWorkflowError("invalid-arguments"); }
+  if (flags.has("--isolated-validation") !== values.has("--validation-root")) { throw new CodexWorkflowError("validation-isolation"); }
+  if (values.has("--validation-root") && (!isAbsolute(values.get("--validation-root")!) || basename(resolve(values.get("--validation-root")!)) !== "codex-plugin-validation")) { throw new CodexWorkflowError("validation-isolation"); }
   if (values.has("--model") && !/^[a-z0-9][a-z0-9/_.:-]{0,199}$/iu.test(values.get("--model")!)) { throw new CodexWorkflowError("invalid-arguments"); }
   if (PROFILE.some((key) => values.has(key))) {
     try {
@@ -71,7 +75,8 @@ export function bundledCatalog() {
 
 export async function executeCodexCommand(command: CodexCommand, dependencies: CodexDependencies, output: CliOutput): Promise<number> {
   const { name, values, flags } = command;
-  const emit = (value: unknown) => output.stdout(JSON.stringify(redactDetails(value), null, 2));
+  // Plans can exceed diagnostic-line length; preserve the full masked field preview.
+  const emit = (value: unknown) => output.stdout(JSON.stringify(redactDetails(value, [], 65536), null, 2));
   const makeProfile = () => {
     const id = values.get("--profile")!;
     const apiRoot = values.get("--api-root")!;
@@ -82,7 +87,9 @@ export async function executeCodexCommand(command: CodexCommand, dependencies: C
     engine: { configFile, allowedConfigDirectory: dirname(configFile), recoveryDirectory: values.get("--recovery") ?? "" },
     executable: values.get("--codex") ?? "", helperDirectory: values.get("--helper") ?? "",
     replaceExisting: flags.has("--replace-existing"), allowExperimental: flags.has("--allow-experimental"),
+    codingValidationRoot: flags.has("--isolated-validation") ? values.get("--validation-root") : undefined,
   };
+  if (flags.has("--isolated-validation")) { emit({ scope: "isolated-coding-validation", message: CODING_VALIDATION_NOTICE }); }
   if (name === "test-model") {
     output.stdout(COST_NOTICE);
     if (!flags.has("--confirm-cost")) { throw new CodexWorkflowError("cost-consent"); }
@@ -93,11 +100,11 @@ export async function executeCodexCommand(command: CodexCommand, dependencies: C
     // Listing does not inspect or instantiate any configuration target.
     const detect = dependencies.detect ?? detectCodex;
     const client = await detect(options.executable);
-    if (!client.installed || client.client !== "codex-cli" || client.version !== "0.157.1") { throw new CodexWorkflowError("client-version"); }
+    if (!client.installed || client.client !== "codex-cli" || !isInspectedCodexVersion(client.version)) { throw new CodexWorkflowError("client-version"); }
     assertCleanEnvironment(dependencies.environment());
     const profile = makeProfile();
     const ids = await dependencies.gateway.listModels(profile);
-    emit({ scope: "key-visible-models", inference: "not-run", total: ids.length, displayed: Math.min(ids.length, 50), models: ids.slice(0, 50).map((modelId) => ({ modelId, ...evaluateActivation(dependencies.catalog, {
+    emit({ scope: "key-visible-models", inference: "not-run", diagnostics: dependencies.gateway.listingDiagnostics?.() ?? [], total: ids.length, displayed: Math.min(ids.length, 50), models: ids.slice(0, 50).map((modelId) => ({ modelId, ...(options.codingValidationRoot ? evaluateCodingValidation : evaluateActivation)(dependencies.catalog, {
       modelId, apiRoot: profile.api.origin, client: "codex-cli", clientVersion: client.version!, protocol: "responses", visibleModelIds: ids, allowExperimental: options.allowExperimental,
     }) })) });
     return 0;

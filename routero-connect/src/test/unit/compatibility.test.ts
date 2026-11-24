@@ -83,8 +83,8 @@ test("invalid data, unknown schema, duplicate IDs, and extra credential fields a
 test("real catalog preserves Phase 2 failures and contains no activatable models", () => {
   const path = resolve(__dirname, "../../../compatibility/models.json");
   const data = parseCompatibilityCatalog(JSON.parse(readFileSync(path, "utf8")));
-  assert.equal(data.records.length, 2);
-  for (const row of data.records) {
+  assert.equal(data.records.length, 3);
+  for (const row of data.records.filter((row) => row.validation.result === "failed")) {
     assert.equal(row.status, "unsupported");
     assert.equal(row.contextWindow, null);
     assert.equal(evaluateActivation(data, {
@@ -92,4 +92,11 @@ test("real catalog preserves Phase 2 failures and contains no activatable models
       apiRoot: row.origin, protocol: row.protocol, allowExperimental: true,
     }).allowed, false);
   }
+  const passedTask = data.records.find((row) => row.modelId === "openai/gpt-6-luna")!;
+  assert.equal(passedTask.validation.result, "partial");
+  assert.equal(passedTask.capabilities.tools, true);
+  assert.equal(passedTask.continuation.supported, true);
+  assert.equal(passedTask.maxOutputTokens, null);
+  assert.equal(passedTask.contextWindow, null);
+  assert.equal(evaluateActivation(data, { modelId: passedTask.modelId, visibleModelIds: [passedTask.modelId], client: "codex-cli", clientVersion: "0.172.0", apiRoot: passedTask.origin, protocol: "responses", allowExperimental: true }).reason, "validation-required");
 });

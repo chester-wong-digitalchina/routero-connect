@@ -36,11 +36,11 @@ export function redactText(text: string, secrets: readonly string[] = []): strin
     .replace(/\bsk-[a-z0-9_-]+/giu, "[REDACTED]");
 }
 
-export function redactDetails(value: unknown, secrets: readonly string[] = []): unknown {
+export function redactDetails(value: unknown, secrets: readonly string[] = [], maxStringLength = 2000): unknown {
   const seen = new WeakSet<object>();
   const visit = (item: unknown, depth: number): unknown => {
     if (typeof item === "string") {
-      return redactText(item, secrets).slice(0, 2000);
+      return redactText(item, secrets).slice(0, maxStringLength);
     }
     if (item === null || typeof item === "boolean" || typeof item === "number") {
       return item;

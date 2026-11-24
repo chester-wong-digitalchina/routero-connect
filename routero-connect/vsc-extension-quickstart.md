@@ -1,48 +1,30 @@
-# Welcome to your VS Code Extension
+# Maintainer quickstart
 
-## What's in the folder
+This repository contains the Routero Connect extension, shared Codex CLI, and validation tooling. The [development guide](docs/development.md) records runtime pins, commands, and implementation boundaries.
 
-* This folder contains all of the files necessary for your extension.
-* `package.json` - this is the manifest file in which you declare your extension and command.
-  * The sample plugin registers a command and defines its title and command name. With this information VS Code can show the command in the command palette. It doesn’t yet need to load the plugin.
-* `src/extension.ts` - this is the main file where you will provide the implementation of your command.
-  * The file exports one function, `activate`, which is called the very first time your extension is activated (in this case by executing the command). Inside the `activate` function we call `registerCommand`.
-  * We pass the function containing the implementation of the command as the second parameter to `registerCommand`.
+## Main entry points
 
-## Setup
+- `package.json` declares extension metadata, public commands, and development scripts.
+- `src/extension.ts` registers commands and creates the native VS Code UI adapter.
+- `src/ui/` implements setup orchestration and the external Node CLI bridge.
+- `src/cli/` and `src/adapters/` contain the shared workflow and client integration.
+- `src/test/` contains unit, host, installed-package, and opt-in native checks.
 
-* install the recommended extensions (amodio.tsl-problem-matcher, ms-vscode.extension-test-runner, and dbaeumer.vscode-eslint)
+## Development workflow
 
+Install the repository's recommended VS Code extensions from `.vscode/extensions.json` and use the pinned Node/npm versions. Run `npm ci`, then `npm run compile` before launching the development extension.
 
-## Get up and running straight away
+Press `F5` to open the Extension Development Host. Run **Routero: Integration Status** from the Command Palette to inspect the packaged progress report without key access or inference. Set breakpoints in the extension/UI sources and inspect the debug console or redacted **Routero Connect** Output Channel. Relaunch the development host after rebuilding changed code.
 
-* Press `F5` to open a new window with your extension loaded.
-* Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Hello World`.
-* Set breakpoints in your code inside `src/extension.ts` to debug your extension.
-* Find output from your extension in the debug console.
+The local API declarations are in `node_modules/@types/vscode/index.d.ts`. Platform scope and real setup instructions are documented in [VS Code setup](docs/vscode-setup.md).
 
-## Make changes
+## Validation and internal packaging
 
-* You can relaunch the extension from the debug toolbar after changing code in `src/extension.ts`.
-* You can also reload (`Ctrl+R` or `Cmd+R` on Mac) the VS Code window with your extension to load your changes.
+- `npm test` runs type checking, lint, and host-independent unit tests.
+- `npm run test:vscode` runs the pinned isolated development-host smoke checks.
+- `npm run package:internal` builds and audits the internal VSIX and standalone CLI.
+- `npm run test:installed` validates the actual VSIX in a project-local profile after packaging.
 
+Run permission-heavy unit tests and Electron host checks serially on this Windows environment. Native credential operations and billable model tests require their documented explicit actions. Keep test state, keys, installed helpers, and normal client settings within the established validation boundaries.
 
-## Explore the API
-
-* You can open the full set of our API when you open the file `node_modules/@types/vscode/index.d.ts`.
-
-## Run tests
-
-* Install the [Extension Test Runner](https://marketplace.visualstudio.com/items?itemName=ms-vscode.extension-test-runner)
-* Run the "watch" task via the **Tasks: Run Task** command. Make sure this is running, or tests might not be discovered.
-* Open the Testing view from the activity bar and click the Run Test" button, or use the hotkey `Ctrl/Cmd + ; A`
-* See the output of the test result in the Test Results view.
-* Make changes to `src/test/extension.test.ts` or create new test files inside the `test` folder.
-  * The provided test runner will only consider files matching the name pattern `**.test.ts`.
-  * You can create folders inside the `test` folder to structure your tests any way you want.
-
-## Go further
-
-* Reduce the extension size and improve the startup time by [bundling your extension](https://code.visualstudio.com/api/working-with-extensions/bundling-extension).
-* [Publish your extension](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) on the VS Code extension marketplace.
-* Automate builds by setting up [Continuous Integration](https://code.visualstudio.com/api/working-with-extensions/continuous-integration).
+We decided to keep Marketplace publication outside the internal package workflow. Builds do not publish or install into a normal profile. See the [roadmap](docs/roadmap.md), [validation record](docs/phase-7-validation.md), and [isolated parity procedure](docs/plugin-parity-test.md) before extending the supported scope.

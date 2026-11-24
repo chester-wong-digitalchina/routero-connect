@@ -86,6 +86,56 @@
       "limitations": [
         "User-reported coding and single-file explanation tasks failed after file reads. Root cause unconfirmed."
       ]
+    },
+    {
+      "id": "codex-cli-01720-uat-gpt6luna-coding-pass-pending-metadata",
+      "modelId": "openai/gpt-6-luna",
+      "client": "codex-cli",
+      "origin": "https://api-uat.routero.ai",
+      "clientVersions": {
+        "minimum": "0.172.0",
+        "maximumExclusive": "0.172.1"
+      },
+      "protocol": "responses",
+      "status": "unverified",
+      "contextWindow": null,
+      "maxOutputTokens": null,
+      "capabilities": {
+        "streaming": null,
+        "tools": true
+      },
+      "continuation": {
+        "supported": true,
+        "limitations": [
+          "One manual calculator coding loop and follow-up passed. Long-context and restart continuation are untested."
+        ]
+      },
+      "compaction": {
+        "mode": "unknown",
+        "limitations": [
+          "Not exercised; no compaction capabilities are inferred."
+        ]
+      },
+      "validation": {
+        "date": "2026-11-24",
+        "result": "partial",
+        "evidence": [
+          {
+            "kind": "manual",
+            "reference": "docs/validation/codex-01720-gpt6luna-success.md"
+          },
+          {
+            "kind": "automated",
+            "reference": "docs/validation/codex-01720-command-auth.json"
+          }
+        ]
+      },
+      "limitations": [
+        "Read, edit, six tests and same-conversation follow-up passed in a manual user run; six tests were independently rerun.",
+        "The user reports an approximate 1M context and prices of USD 0.11 input / 0.52 output per 1M tokens. Exact context and maximum output limits are not shown; no limits are inferred.",
+        "Manual run used a temporary environment key. Plugin-managed Windows credentials, full helper lifecycle and real VSIX-configured coding parity remain unverified.",
+        "This evidence does not enable activation or imply Codex IDE compatibility."
+      ]
     }
   ]
 }

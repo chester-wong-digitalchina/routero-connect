@@ -1,5 +1,7 @@
 # Phase 1 validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Date: 2026-11-15 (Asia/Singapore).
 
 ## Passed

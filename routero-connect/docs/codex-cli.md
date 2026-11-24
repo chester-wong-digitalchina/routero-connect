@@ -1,25 +1,23 @@
 # Codex CLI workflow
 
-Updated: 2026-11-23 (Asia/Singapore).
+Updated: 2026-11-24 (Asia/Singapore). Internal CLI/extension: **0.0.5**; new helper staging: **0.0.7**.
 
-Phase 6 joins the credential, compatibility, and configuration components into CLI commands. You can inspect local prerequisites, explicitly list models for a stored key, and request a small text test. **You cannot yet enable a supported coding model: the bundled compatibility catalog has no approved combination.** Connect leaves your settings unchanged in that case. Neither changing a model name nor opting into experimental support overrides a failed or unverified record.
-
-The connection and recovery paths are tested with synthetic models and dummy configurations. Those tests demonstrate the implementation, not a successful Routero coding session. The reported Phase 2 failures still need a separately recorded retest before the full issue can be accepted.
+The CLI joins credential storage, compatibility checks and transactional configuration. VS Code setup controls invoke this same CLI through a selected external Node executable. The isolated UAT + `openai/gpt-6-luna` + Codex 0.172.0 setup has passed a real coding task and resumed continuation using command-backed authentication. Ordinary model approval remains gated by unknown model limits and further acceptance checks; experimental validation does not approve arbitrary combinations. See [the handoff](handoff.md) and [isolated validation procedure](plugin-parity-test.md).
 
 ## Build and prerequisites
 
-Use the [documented Node/npm versions](development.md), Windows, and `npm run package`. Commands below run `node .\dist\cli.js`; no global installation is needed. CLI version **0.157.1** has pinned command-authentication evidence. Other CLI versions and the IDE interface require independent validation. A detected version alone does not prove model compatibility.
+Use the [documented Node/npm versions](development.md), Windows, and `npm run package`. Commands below run `node .\dist\cli.js`; no global installation is needed. CLI versions **0.157.1 and 0.172.0** have recorded command-authentication checks; only 0.172.0 has the Luna coding evidence. Other versions and the IDE interface require independent validation. A detected version alone does not prove model compatibility.
 
-Store a key only through the existing [credential commands](credentials.md). The workflow references an existing profile/origin/credential ID and never collects a key in an argument, stores a plaintext key, or falls back to your personal login. Models, connect, online doctor, and the explicit model test read the selected Windows credential; local doctor does not.
+Store a key only through the existing [credential commands](credentials.md). The workflow references an existing profile/origin/credential ID and never collects a key in an argument, stores a plaintext key, or falls back to an existing personal login. Models, connect, online doctor, and the explicit model test read the selected Windows credential; local doctor does not.
 
 Supply absolute paths rather than relying on automatic home-directory or executable discovery:
 
 - `--codex`: the selected `codex.exe`. Detection executes only `--version`, with bounded time/output and a minimal environment, without a shell.
 - `--config`: the selected `config.toml`, whose parent directory must already exist. `auth.json`, Codex internals, sandbox, approval, MCP, and unrelated providers are not edited.
-- `--helper`: a private helper directory containing its script and manifest. Installed **0.0.3** remains accepted; new staging uses **0.0.4** because the CLI bundle changed. No installed version is updated automatically. Manifest hash checks detect accidental changes, not a malicious process with your Windows identity. The manifest must name the currently running Node executable.
+- `--helper`: a private helper directory containing its script and manifest. Reviewed helpers **0.0.3?0.0.6** remain accepted; new staging uses **0.0.7**. No installed version is updated automatically. Manifest hash checks detect accidental changes, not a malicious process with the current user's Windows identity. The manifest must name the currently running Node executable.
 - `--recovery`: a separate private recovery directory outside Git. Unmarked existing directories are refused. Keep it and each returned change ID until restoration and review are complete.
 
-This development increment did not write live user settings, install a helper, or access the actual Windows credential store. Continue using project-local fixtures for development; normal user setup remains outside this increment's validation boundary.
+Development checks use project-local fixtures. The separately authorized live setup reused an existing Windows credential/helper and created an isolated configuration with private recovery outside Git. Normal Codex configuration and the gateway were unchanged.
 
 ## Inspect without running a model
 
@@ -47,7 +45,7 @@ The following describes the implemented flow **after a combination has real evid
 1. Select a permitted model from `models` and run `connect` with the selected paths, profile, origin, and `--model`. This is a read-only preview; model listing is the only gateway request.
 2. Review the selected origin/model, masked field changes, conflicts, and restart instructions. Replacing existing managed values additionally requires `--replace-existing`. Conflicting/unsupported auth, profile, and feature overrides are preserved and reported.
 3. Repeat the reviewed command with `--apply --expected-revision <revision-from-preview>`. A changed file revision requires a new review. The adapter rechecks client, helper, and current model permissions; the engine checks for concurrent edits and keeps private recovery records before replacing the file.
-4. Keep the returned `changeId` and recovery directory. Restart the affected Codex CLI yourself. This tool never automatically restarts a client or executes your code.
+4. Keep the returned `changeId` and recovery directory. Restart the affected Codex CLI manually. This tool never automatically restarts a client or executes project code.
 
 The provider uses normalized `/v1` URLs, Responses, separate executable/argument strings for command-backed authentication, a 10000 ms helper timeout, disabled WebSockets, and zero request/stream retries. Explicitly reviewed environment-auth settings are removed from the Routero provider only; other providers and existing login files remain intact. Existing authentication/Codex override environment variables must be resolved in a clean terminal, without printing their values.
 

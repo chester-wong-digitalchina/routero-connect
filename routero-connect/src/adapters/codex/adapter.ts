@@ -11,6 +11,9 @@ import { CredentialError } from "../../credentials/errors";
 import type { GatewayAccess } from "./gateway";
 import { assertCleanEnvironment, detectCodex, inspectHelper, type HelperInfo } from "./runtime";
 import { CodexWorkflowError, workflowDiagnostic } from "./errors";
+import { isInspectedCodexVersion } from "../../core/codex-versions";
+import { basename, isAbsolute, join, resolve } from "node:path";
+import { CODING_VALIDATION_NOTICE, evaluateCodingValidation } from "../../core/coding-validation";
 
 export interface CodexAdapterOptions {
   readonly engine: ConfigEngineOptions;
@@ -18,6 +21,7 @@ export interface CodexAdapterOptions {
   readonly helperDirectory: string;
   readonly replaceExisting?: boolean;
   readonly allowExperimental?: boolean;
+  readonly codingValidationRoot?: string;
 }
 export interface CodexDependencies {
   readonly catalog: CompatibilityCatalog;
@@ -37,20 +41,28 @@ function safeDiagnostic(error: unknown): Diagnostic {
 /** Explicit single-file adapter. Login data, sandbox, tools, and permissions remain Codex-owned. */
 export class CodexCliAdapter implements ClientAdapter {
   private readonly engine: CodexConfigEngine;
-  private readonly plans = new WeakMap<ConfigPlan, { profile: ConnectionProfile; modelId: string; version: string; helperHash: string }>();
+  private readonly plans = new WeakMap<ConfigPlan, { profile: ConnectionProfile; modelId: string; version: string; clientPath?: string; helperHash: string; enginePlan: ConfigPlan }>();
 
   constructor(private readonly options: CodexAdapterOptions, private readonly dependencies: CodexDependencies) {
+    this.assertIsolation();
     this.engine = new CodexConfigEngine(options.engine);
+  }
+
+  private assertIsolation(): void {
+    const root = this.options.codingValidationRoot;
+    if (root === undefined) { return; }
+    if (!isAbsolute(root) || basename(resolve(root)) !== "codex-plugin-validation"
+      || resolve(this.options.engine.configFile) !== join(resolve(root), "codex-home", "config.toml")) { throw new CodexWorkflowError("validation-isolation"); }
   }
 
   async detect(): Promise<ClientInfo> {
     const info = await (this.dependencies.detect ?? detectCodex)(this.options.executable);
-    if (!info.installed || info.client !== "codex-cli" || info.version !== "0.157.1") { throw new CodexWorkflowError("client-version"); }
+    if (!info.installed || info.client !== "codex-cli" || !isInspectedCodexVersion(info.version)) { throw new CodexWorkflowError("client-version"); }
     return info;
   }
 
   private decision(profile: ConnectionProfile, modelId: string, version: string, visible: readonly string[]): ActivationDecision {
-    return evaluateActivation(this.dependencies.catalog, { modelId, client: "codex-cli", clientVersion: version,
+    return (this.options.codingValidationRoot ? evaluateCodingValidation : evaluateActivation)(this.dependencies.catalog, { modelId, client: "codex-cli", clientVersion: version,
       apiRoot: profile.api.origin, protocol: "responses", visibleModelIds: visible, allowExperimental: this.options.allowExperimental });
   }
 
@@ -83,6 +95,7 @@ export class CodexCliAdapter implements ClientAdapter {
   }
 
   async plan(input: ConnectionInput): Promise<ConfigPlan> {
+    this.assertIsolation();
     // Never trust a caller's pre-computed ActivationDecision; recalculate it.
     const profile = createConnectionProfile({ id: input.profile.id, name: input.profile.name, apiRoot: input.profile.api.origin, credential: input.profile.credential });
     const client = await this.detect();
@@ -106,9 +119,10 @@ export class CodexCliAdapter implements ClientAdapter {
     add([...provider, "auth", "timeout_ms"], 10000);
     // Explicitly remove an existing refresh override rather than retain unknown behavior.
     add([...provider, "auth", "refresh_interval_ms"], undefined);
-    const plan = await this.engine.plan(changes);
-    if (plan.files[0].expectedRevision !== inspectedRevision) { throw new ConfigError("conflict"); }
-    this.plans.set(plan, { profile, modelId: input.modelId, version: client.version!, helperHash: helper.sha256 });
+    const enginePlan = await this.engine.plan(changes);
+    if (enginePlan.files[0].expectedRevision !== inspectedRevision) { throw new ConfigError("conflict"); }
+    const plan = this.options.codingValidationRoot ? Object.freeze({ ...enginePlan, restartInstructions: Object.freeze([...enginePlan.restartInstructions, CODING_VALIDATION_NOTICE, `In a separate test terminal, set CODEX_HOME to ${join(resolve(this.options.codingValidationRoot), "codex-home")} and run codex --no-daemon from a fresh disposable calculator. Keep the normal VS Code environment unchanged.`]) }) : enginePlan;
+    this.plans.set(plan, { profile, modelId: input.modelId, version: client.version!, clientPath: client.executablePath, helperHash: helper.sha256, enginePlan });
     return plan;
   }
 
@@ -117,13 +131,15 @@ export class CodexCliAdapter implements ClientAdapter {
     this.plans.delete(plan);
     if (!saved) { return { status: "failed", diagnostics: [workflowDiagnostic(new CodexWorkflowError("invalid-arguments"))] }; }
     try {
+      this.assertIsolation();
       assertCleanEnvironment(this.dependencies.environment());
       const client = await this.detect();
       const helper = await (this.dependencies.helper ?? inspectHelper)(this.options.helperDirectory);
-      if (client.version !== saved.version || helper.sha256 !== saved.helperHash) { throw new CodexWorkflowError("helper-unavailable"); }
+      if (client.version !== saved.version || client.executablePath !== saved.clientPath) { throw new CodexWorkflowError("client-changed"); }
+      if (helper.sha256 !== saved.helperHash) { throw new CodexWorkflowError("helper-unavailable"); }
       const visible = await this.dependencies.gateway.listModels(saved.profile);
       if (!this.decision(saved.profile, saved.modelId, client.version!, visible).allowed) { throw new CodexWorkflowError("compatibility-blocked"); }
-      return await this.engine.apply(plan);
+      return await this.engine.apply(saved.enginePlan);
     } catch (error) { return { status: "failed", diagnostics: [safeDiagnostic(error), ...(error instanceof CodexWorkflowError ? error.diagnostics : [])] }; }
   }
 
@@ -141,7 +157,7 @@ export class CodexCliAdapter implements ClientAdapter {
     const document = await parseDocument((await snapshot(this.options.engine.configFile)).text).catch(() => undefined);
     diagnostics.push(createDiagnostic({ category: "configuration", outcome: "not-run", code: document && fieldFingerprint(document, ["model_provider"]) === valueFingerprint("routero") ? "routero-selected-not-verified" : "routero-not-selected", message: "Configuration selection alone does not establish a working connection. Use explicit online listing and recorded coding acceptance." }));
     diagnostics.push(createDiagnostic({ category: "protocol", outcome: "not-run", code: "inference-not-run", message: "No model request was made. Test model requires explicit credit consent and does not validate tool use." }));
-    diagnostics.push(createDiagnostic({ category: "real-client", outcome: "warning", code: "coding-unverified", message: "The reported Phase 2 coding failures remain unresolved; this diagnostic does not mark a model supported." }));
+    diagnostics.push(createDiagnostic({ category: "real-client", outcome: "warning", code: "coding-unverified", message: "A manual GPT-6 Luna coding loop passed; exact model limits and full plugin-managed validation remain pending. This local diagnostic does not mark a model supported." }));
     return diagnostics;
   }
 

@@ -5,8 +5,8 @@ import { CredentialError } from "./errors";
 import { protectHelperDirectory } from "./private-directory";
 
 // A changed bundled CLI is staged at a new path, never over an installed version.
-export const HELPER_VERSION = "0.0.4";
-export const SUPPORTED_HELPER_VERSIONS = ["0.0.3", HELPER_VERSION] as const;
+export const HELPER_VERSION = "0.0.7";
+export const SUPPORTED_HELPER_VERSIONS = ["0.0.3", "0.0.4", "0.0.5", "0.0.6", HELPER_VERSION] as const;
 
 /** Explicit staging only: no default user installation, PATH edit, or download. */
 export async function stageHelper(sourceBundle: string, destination: string): Promise<{

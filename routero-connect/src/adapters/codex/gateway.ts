@@ -1,14 +1,17 @@
 import type { ConnectionProfile } from "../../core/profiles";
-import { httpDiagnostic, transportDiagnostic } from "../../core/diagnostics";
+import { createDiagnostic, httpDiagnostic, transportDiagnostic, type Diagnostic } from "../../core/diagnostics";
 import { CodexWorkflowError } from "./errors";
 
 export interface GatewayAccess {
   listModels(profile: ConnectionProfile): Promise<readonly string[]>;
+  listingDiagnostics?(): readonly Diagnostic[];
   testModel(profile: ConnectionProfile, modelId: string): Promise<{ readonly completed: true; readonly codingCompatibility: "not-tested" }>;
 }
 
 /** No redirects, retries, raw error bodies, prompt logging, or ambient credentials. */
 export class RouteroGateway implements GatewayAccess {
+  private listingWarnings: readonly Diagnostic[] = [];
+  listingDiagnostics(): readonly Diagnostic[] { return this.listingWarnings; }
   constructor(private readonly readCredential: (profile: ConnectionProfile) => Promise<string>, private readonly request: typeof fetch = fetch, private readonly signal?: AbortSignal) {}
 
   private async json(profile: ConnectionProfile, probe?: string): Promise<unknown> {
@@ -54,14 +57,19 @@ export class RouteroGateway implements GatewayAccess {
   }
 
   async listModels(profile: ConnectionProfile): Promise<readonly string[]> {
+    this.listingWarnings = [];
     const result = await this.json(profile) as { data?: unknown };
     if (!result || !Array.isArray(result.data) || result.data.length > 4096) { throw new CodexWorkflowError("model-list-invalid"); }
-    const ids = result.data.map((item: unknown) => {
+    const ids: string[] = [];
+    let unsupportedAliases = 0;
+    for (const item of result.data as unknown[]) {
       const id = (item as { id?: unknown })?.id;
-      if (typeof id !== "string" || !/^[a-z0-9][a-z0-9/_.:-]{0,199}$/iu.test(id) || /\bsk-/iu.test(id)) { throw new CodexWorkflowError("model-list-invalid"); }
-      return id;
-    });
+      if (typeof id !== "string" || !id || id.length > 200 || /[\u0000-\u001f\u007f]|\bsk-/iu.test(id)) { throw new CodexWorkflowError("model-list-invalid"); }
+      if (!/^[a-z0-9][a-z0-9/_.:-]{0,199}$/iu.test(id)) { unsupportedAliases++; continue; }
+      ids.push(id);
+    }
     if (new Set(ids).size !== ids.length) { throw new CodexWorkflowError("model-list-invalid"); }
+    if (unsupportedAliases) { this.listingWarnings = [createDiagnostic({ category: "model-list", outcome: "warning", code: "unsupported-model-aliases", message: "Some gateway aliases cannot be represented by this CLI and were excluded. Valid model IDs remain eligible for compatibility checks.", details: { excludedCount: unsupportedAliases } })]; }
     return Object.freeze(ids);
   }
 

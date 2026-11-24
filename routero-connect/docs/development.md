@@ -1,5 +1,11 @@
 # Development and validation
 
+## Current baseline
+
+Source version 0.0.5 stages new helper 0.0.7 and retains reviewed earlier versions. The last runtime validation passed type checking, lint, 123 unit tests and two installed-host checks; the subsequent handoff pass changes documentation only. The isolated Luna live coding and resumed continuation results are recorded separately. Start with the [handoff](handoff.md) and [design decisions](design-decisions.md) before changing compatibility or setup behavior.
+
+Later phase-specific development notes preserve their original versions and test boundaries. Their former no-live-parity statements are historical; they do not override the current handoff status.
+
 ## Tooling
 
 Tested development versions: **Node.js 24.18.0** and **npm 11.16.0**. `.node-version` pins the development Node version; `packageManager` records npm. The supported development range is Node 24 (from 24.18.0) and npm 11 (from 11.16.0). Wider runtime support has not been established.
@@ -30,7 +36,7 @@ node dist/cli.js doctor
 - `npm run test:vscode`: opt-in VS Code integration runner; may download/launch Electron. It currently contains the inherited scaffold test, not full UI acceptance. Do not run it against normal user state under the current project-only write boundary.
 - `npm run cli -- <command>`: an alternative to `node dist/cli.js <command>` after building. The npm bin entry is prepared for later packaging; global CLI installation is not part of Phase 3.
 
-CLI exit codes: `0` for a completed status/help/URL check, `2` for rejected arguments/URLs, and `1` for unavailable setup or an unexpected failure. In particular, **offline `doctor` intentionally returns 1**: it reports that no live checks ran and setup is unavailable. It does not claim your account or gateway is broken.
+CLI exit codes: `0` for a completed status/help/URL check, `2` for rejected arguments/URLs, and `1` for unavailable setup or an unexpected failure. In particular, **offline `doctor` intentionally returns 1**: it reports that no live checks ran and setup is unavailable. It does not claim an account or gateway is broken.
 
 Never pass a key as a CLI argument or include it in a URL. No CLI command accepts a key as an argument. The three offline checks never access credentials; explicit `credential` commands do. Unknown arguments are not echoed. Read the [credential guide](credentials.md) before performing OS-store operations.
 
@@ -89,3 +95,33 @@ Read [configuration safety and limits](configuration-engine.md) before integrati
 `npm test` includes synthetic adapter lifecycle tests, mocked HTTP transport, CLI argument/revision/credit checks, helper-integrity inspection, cancellation, and timeout coverage. Synthetic compatibility rows live only in test fixtures and must never be added to the production catalog. These tests use project-local dummy files, private fixture backups, and fake credential readers; they do not access the actual Windows vault, launch Codex, or call Routero.
 
 The production CLI bundles the reviewed `compatibility/models.json`; there is no command-line catalog override or approval bypass. Every real combination remains blocked until its evidence is reviewed. Read the [CLI guide](codex-cli.md) before requesting isolated live acceptance. Do not rerun the opt-in Phase 4 native store/install test as a routine regression check. Newly staged helper version 0.0.4 needs its own native acceptance before release; installed 0.0.3 remains untouched.
+
+## Phase 7 UI and artifacts
+
+`npm test` covers the host-independent wizard controller and Node bridge, including production-catalog blocking, masked stdin key entry, preview revision, cancellation, explicit credit consent, independent recovery, and raw-output rejection. One subprocess test runs only a project-local dummy Node script; it does not invoke Codex or the OS credential store. Focused reruns can use `node --test out/test/unit/setup-controller.test.js out/test/unit/ui-cli-runner.test.js` after compilation.
+
+`npm run package:internal` uses pinned `@vscode/vsce` 4.1.1 and archive reader `yauzl` 3.4.0 as development-only dependencies. It runs the build, packages a Windows x64 VSIX, audits actual ZIP entries/content, and copies a standalone CLI with version/hash records and recovery guides. It never publishes, installs, or accesses publisher credentials. Install scripts were disabled when these dependencies were added. No secret-scanner bypass is configured; missing-license packaging is explicit for this unlicensed internal artifact.
+
+`.vscodeignore` is an allowlist of runtime bundles, metadata and documentation. `dist/`, `out/`, `.vscode-test/` and `tmp/` remain Git-ignored. New helper bundles stage at 0.0.5; earlier installed versions are not overwritten.
+
+`npm run test:vscode` pins VS Code 1.146.0 and uses project-local test user data, extensions, profile, app-data and temp directories. The two host smoke checks activate/register commands and open the progress report; they do not run setup or prove Codex IDE compatibility. Download/launch may need explicit network/process access in a restricted sandbox. Do not replace isolated paths with normal user profiles. See [Phase 7 validation](phase-7-validation.md) for actual results and remaining acceptance.
+
+After packaging, `npm run test:installed` verifies the VSIX hash, installs it only into `tmp/validation/phase-7-installed/`, and runs the same two checks against the installed extension. A separate dummy development harness ensures the test does not silently use the source extension. The test does not run the wizard, access native credentials, or exercise Codex. Its profiles, logs and downloaded VS Code are project-local and ignored.
+
+## Isolated coding validation follow-up
+
+Build 0.0.3 centralizes inspected Codex versions (0.157.1 and 0.172.0) and adds a explicitly authorized validation-only eligibility function for UAT/openai/gpt-6-luna/0.172.0 based on the real calculator run and native command-auth check. Normal compatibility evaluation remains unchanged; unknown context/output/streaming/compaction fields are not manufactured. Tests cover ordinary denial, narrow opt-in, wrong version/origin/model/interface/visibility, missing evidence, isolation paths, generated setting parity, sealed-plan application, and rollback preserving unrelated login data.
+
+The native protocol check is opt-in and loopback-only: compile tests, then run `node out/test/manual/codex-command-auth.js --codex <absolute-codex.exe> --confirm-local-test`. It writes only project-local fixtures, uses a dummy token source, and expects one HTTP 418 response. It never accesses native credentials or Routero. New helper bundles stage as 0.0.6. See [the parity procedure](plugin-parity-test.md) for repeatable setup and [the live result](validation/setup-takeover-005.md) for the subsequent passing run.
+
+The full updated unit suite passes 117 tests. Run the permission-heavy unit suite and installed Electron smoke checks serially on this Windows host: a concurrent run timed out opening the report, while the isolated rerun passed both checks. Generated artifacts, local native-probe results and logs remain ignored; do not commit real keys or raw sessions.
+
+## Documentation style
+
+We write project documentation for future maintainers. Record decisions and their rationale with collective or impersonal wording, such as ?We decided to retain the compatibility gate.? Avoid second-person address and references to the current conversation. Operational procedures can use direct imperative steps without personal pronouns. Preserve the distinction between operator-reported observations, independently checked evidence, implementation decisions, and remaining validation; collective wording must not imply that an unobserved test was executed.
+
+## GUI environment isolation fix (0.0.4)
+
+We decided to validate the managed CLI's effective child environment rather than reject unrelated VS Code host overrides. The existing allowlist supplies only required Windows/profile/temp variables; provider keys, Codex overrides and Node/Electron injection flags never reach the child. Names-only diagnostics identify ignored known overrides without exposing values. The host environment is read once and left intact. The standalone CLI still rejects conflicting variables in its own process.
+
+Regression coverage includes an actual Node child launched while the simulated host contains a provider key, isolated CODEX_HOME, invalid NODE_OPTIONS module injection, NODE_PATH and Electron Node mode. The child starts, receives none of those variables, and the host object remains unchanged. See validation/gui-environment-guard-fix.md. Existing helper 0.0.6 and stored credentials do not need replacement: this fix changes the UI bridge, not CLI/helper behavior.

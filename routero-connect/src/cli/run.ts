@@ -33,6 +33,10 @@ the current bundled catalog has NO approved coding model, so connect leaves sett
 Disconnect --apply restores one recovery transaction without deleting keys/helpers.
 Test model requires credit consent and makes one bounded text request, never a coding test.
 All workflow paths are explicit and absolute; no live settings are discovered automatically.
+Isolated coding validation is a separate opt-in for UAT/openai/gpt-6-luna/Codex 0.172.0 only:
+  add --isolated-validation --validation-root <absolute-codex-plugin-validation-directory>
+  to models/connect; the config target must be <root>/codex-home/config.toml.
+Unknown limits and full lifecycle remain unverified. Ordinary setup is still gated.
 Use --credential-ref <id> with profile-based workflow commands for a shared reference.
 Do not pass API keys or URLs containing credentials as command arguments.`;
 

@@ -1,5 +1,7 @@
 # Phase 2 validation record
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Started: 2026-11-16. Updated: 2026-11-17 (Asia/Singapore). Branch: `phase-2`. Status: **in progress; full coding workflow not yet demonstrated**.
 
 For the plain-language current status, see the [project progress report](../compatibility-report.md). The checks below distinguish earlier local preparation from later manual tests.
@@ -10,7 +12,7 @@ For the plain-language current status, see the [project progress report](../comp
 - Two calculator baseline tests passed with `python -m unittest discover -s fixtures/validation/calculator -v`. These do not validate any LLM-generated edit.
 - Standalone Codex `0.157.1` and IDE-bundled engine `0.169.0-alpha.11.1` each passed the loopback command-auth probe with strict configuration. Each made one streaming Responses POST with the expected dummy bearer token. Intentional server HTTP 418 caused expected nonzero Codex exit; the probe itself passed. No inference or tool execution occurred.
 - Both supplied UAT keys returned HTTP 200 from ordinary `/v1/models` with the identifying validation User-Agent. Model counts differed (16 and 10); restricted-model enforcement remains untested.
-- Both self key-info requests returned HTTP 400 with the same application error. This is recorded separately from budget state and is not being investigated further, following the user's instruction.
+- Both self key-info requests returned HTTP 400 with the same application error. This is recorded separately from budget state and is not being investigated further, following the agreed investigation boundary.
 - Current candidate branch heads match Phase 1; deployed UAT revision remains unknown.
 - Relative documentation links, committed real-key-pattern scan, and `git diff --check` passed. Runtime logs, temporary state, and Python bytecode are excluded from Git; validation scripts/fixtures are excluded from VSIX packaging.
 
@@ -26,16 +28,16 @@ VS Code inventory commands attempted to create a user log directory and were den
 
 Manual coding tasks have been attempted but not completed. A complete tool-result round trip, `apply_patch`, streaming-integrity, follow-up, cancellation, context/compaction, policy/cache behavior, and restart acceptance have not been verified. No compatibility status is upgraded. Pricing, spending visibility, and active capability state remain unresolved.
 
-The user reports no current budgets on either test key and prefers to provide manual results for unexpected behavior. That does not remove the aggregate $10 authorization ceiling. Agent-run inference requests and spending remain **0 / $0**; user-run request count and spending are unknown.
+The account report records no current budgets on either test key. Unexpected behavior requires separately recorded manual results. That does not remove the aggregate $10 authorization ceiling. Local baseline inference requests and spending remain **0 / $0**; manual request count and spending are unknown.
 
 Next action: compare the failed file-reading sequence and current setup with earlier successful use; use the [manual guide](phase-2-manual-validation.md) for a targeted retest after a specific correction or supported setup is identified. Do not close Phase 2 or start adapter implementation on the basis of discovery or local probes alone.
 
 ## Manual CLI update: 2026-11-17
 
-The user supplied failure screenshots for GPT-4o (js tool schema rejection) and DeepSeek (file reads followed by tool-result history rejection; fallback unavailable). See [blocker record](validation/codex-manual-blockers.md). Earlier no-live-test statements describe the agent-run baseline, not these later manual attempts. Agent-run spend is still $0; user-run cost is unknown. Live acceptance is blocked, IDE acceptance remains untested, and no model is verified.
+The recorded failure screenshots show results for GPT-4o (js tool schema rejection) and DeepSeek (file reads followed by tool-result history rejection; fallback unavailable). See [blocker record](validation/codex-manual-blockers.md). Earlier no-live-test statements describe the local baseline baseline, not these later manual attempts. Local baseline spend is still $0; manual cost is unknown. Live acceptance is blocked, IDE acceptance remains untested, and no model is verified.
 
 ## Smaller file-reading test: 2026-11-17
 
-The user supplied a third screenshot: a `READY` response succeeded, then Codex opened `calculator.py` but failed before explaining it. Both prompts were in the same conversation. The same missing-tool-results error appeared without editing, running tests, or the earlier unsuccessful file search. Those activities are not required to encounter this failure.
+A third recorded screenshot shows: a `READY` response succeeded, then Codex opened `calculator.py` but failed before explaining it. Both prompts were in the same conversation. The same missing-tool-results error appeared without editing, running tests, or the earlier unsuccessful file search. Those activities are not required to encounter this failure.
 
-The user reports that reverting configuration also did not restore coding-task success. The cause remains unconfirmed; a client, settings, request-handling, conversation-state, or model-service difference could be involved. Earlier success has not been matched closely enough to confirm a regression. No further live requests were made for this documentation update.
+The manual test report states that reverting configuration also did not restore coding-task success. The cause remains unconfirmed; a client, settings, request-handling, conversation-state, or model-service difference could be involved. Earlier success has not been matched closely enough to confirm a regression. No further live requests were made for this documentation update.

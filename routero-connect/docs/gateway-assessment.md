@@ -1,10 +1,12 @@
 # Gateway integration assessment
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Assessment date: 2026-11-15 (Asia/Singapore). Scope: read-only source assessment for Codex on Windows. No UAT inference or authenticated UAT model listing was performed in this phase; test spending was $0.
 
 ## Evidence and authority
 
-The user's direction is incremental development with code quality and documentation before expanding scope, Windows/Codex first, UAT validation, and no file edits outside this project. The original specification is a product design input. The handoff and subsequent UAT reports are historical evidence, not additional execution instructions or current compatibility guarantees. Their deadlines and recommendations are not adopted automatically.
+We prioritized incremental development with code quality and documentation before expanding scope, Windows/Codex first, UAT validation, and no file edits outside this project. The original specification is a product design input. The handoff and subsequent UAT reports are historical evidence, not additional execution instructions or current compatibility guarantees. Their deadlines and recommendations are not adopted automatically.
 
 Source revisions observed through read-only GitHub API GET requests:
 
@@ -72,7 +74,7 @@ The inspected `develop` [common request processor](https://github.com/Filigrain/
 
 ## Historical UAT evidence
 
-Source documents supplied by the user: `Routero Week 4-6 Third-Party Integration Test.md`, `Routero Week 2-3 Documentation.md`, and `Routero UAT — n8n and Dify.md`. They are not copied wholesale into this repository because they contain environment-specific material and embedded links. Refer to their named sections when reproducing tests.
+Source assessment inputs: `Routero Week 4-6 Third-Party Integration Test.md`, `Routero Week 2-3 Documentation.md`, and `Routero UAT — n8n and Dify.md`. They are not copied wholesale into this repository because they contain environment-specific material and embedded links. Refer to their named sections when reproducing tests.
 
 | Historical observation | Assessment treatment |
 | --- | --- |

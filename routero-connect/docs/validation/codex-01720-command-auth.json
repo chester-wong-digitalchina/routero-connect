@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-24",
+  "clientVersion": "0.172.0",
+  "exitCode": 1,
+  "expectedHttpStatus": 418,
+  "postRequests": 1,
+  "tokenMatched": true,
+  "responsesPathMatched": true,
+  "source": "dummy-token-loopback-command-auth",
+  "windowsCredentialStoreAccessed": false,
+  "liveInferenceRequests": 0,
+  "costUsd": 0,
+  "limitations": [
+    "Codex --no-daemon exec accepted strict Responses configuration and obtained a dummy token from an absolute Node command with separate arguments.",
+    "The loopback server intentionally returned HTTP 418; exit code 1 is expected and is not an authentication failure in this probe.",
+    "The token source is a project-local dummy script, not the real Windows Credential Manager helper. No actual key or model was used."
+  ]
+}

@@ -1,5 +1,7 @@
 # Phase 3 validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Date: 2026-11-17 (Asia/Singapore). Branch: `phase-3`.
 
 ## Outcome
@@ -21,7 +23,7 @@ Tests cover invalid/normalized URLs, domain/port credential separation, profile 
 
 The initial sandboxed esbuild run failed while reading an ancestor directory, as in Phase 1. The approved production build outside the sandbox passed; build output stayed under this project's `dist/`. Creating the branch also required approved access to the enclosing repository's Git metadata. All source/documentation/cache changes are project-local.
 
-No gateway requests, model inference, key-store access, profile persistence, client-setting writes, or external helper installation occurred. No gateway files or remote issues were changed. Inference spending for Phase 3 is $0; this does not establish the unknown cost of earlier user-run Phase 2 tests.
+No gateway requests, model inference, key-store access, profile persistence, client-setting writes, or external helper installation occurred. No gateway files or remote issues were changed. Inference spending for Phase 3 is $0; this does not establish the unknown cost of earlier manual Phase 2 tests.
 
 ## Remaining work
 

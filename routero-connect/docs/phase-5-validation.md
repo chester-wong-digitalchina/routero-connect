@@ -1,5 +1,7 @@
 # Phase 5 configuration validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Updated: 2026-11-22 (Asia/Singapore). Branch: `phase-5`.
 
 ## What was added

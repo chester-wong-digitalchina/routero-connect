@@ -1,14 +1,16 @@
 # Phase 2: manual Codex validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Status: live CLI attempts failed; pause retries pending maintainer evidence. Last updated: 2026-11-17 (Asia/Singapore).
 
 See [reported blockers](validation/codex-manual-blockers.md). Both GPT-4o and DeepSeek failed the coding gate. The steps below remain the acceptance procedure for a later targeted retest; do not repeat them blindly.
 
-The user will report live results when gateway/client behavior needs checking. Do not spend time debugging the self key-info failure or change gateway settings to make this test pass. No policy, key budget, normal user configuration, or external repository changes are automated by this guide.
+Unexpected gateway/client behavior requires a separately recorded live result. Do not spend time debugging the self key-info failure or change gateway settings to make this test pass. No policy, key budget, normal user configuration, or external repository changes are automated by this guide.
 
 ## Before testing
 
-Use an existing working **Routero UAT** Codex connection. If one is not already configured, stop and report that; this guide does not ask you to install an unimplemented credential helper or paste a key into TOML. Historical environment-variable setup is not the final plugin credential design; the local dummy-helper probe is not a production secret store.
+Use an existing working **Routero UAT** Codex connection. If one is not already configured, stop and report that; this guide does not include installing an unimplemented credential helper or pasting a key into TOML. Historical environment-variable setup is not the final plugin credential design; the local dummy-helper probe is not a production secret store.
 
 Record only non-secret facts:
 
@@ -18,7 +20,7 @@ Record only non-secret facts:
 - Active key/model policy names and enabled capabilities, or explicitly `none`/`unknown`. No automatic policy changes.
 - Current key spend and the selected model's input/output prices shown by Routero, if available. Do not assume provider retail pricing is Routero billing.
 
-Neither key currently has a configured key budget according to the user: the demo key's previous $0.01 budget was removed and Admin Group had none. The authorized **combined testing ceiling remains $10**. Do not run repeated tasks or large-context tests if cost visibility is unavailable. Report that limitation first.
+Neither key currently has a configured key budget according to the account report: the demo key's previous $0.01 budget was removed and Admin Group had none. The authorized **combined testing ceiling remains $10**. Do not run repeated tasks or large-context tests if cost visibility is unavailable. Report that limitation first.
 
 ## 1. Prepare the disposable calculator
 
@@ -39,13 +41,13 @@ The baseline should pass two tests and contain no subtraction function. Keep CLI
 
 Open the scratch calculator directory as the working project in the existing Routero-connected Codex client. Confirm the selected provider/model before sending:
 
-> Read calculator.py and test_calculator.py. Add a subtract(left, right) function and tests for positive, negative, equal, and fractional operands. Use your normal file-editing tool, run python -m unittest -v, and explain the changes and test result. Work only inside this calculator project.
+> Read calculator.py and test_calculator.py. Add a subtract(left, right) function and tests for positive, negative, equal, and fractional operands. Use the normal file-editing tool, run python -m unittest -v, and explain the changes and test result. Work only inside this calculator project.
 
 Watch for actual file-read, edit, and shell/test actions. Record whether the editing tool is `apply_patch` or something else; permission to use a different editing tool does not establish custom-tool compatibility. A suggested code block alone is not a successful edit. Do not approve actions outside the disposable project.
 
 ## 3. Follow up in the same conversation
 
-> What does subtract(-3, -8) return? Explain using the implementation you just added, and confirm that the existing multiplication test still passes.
+> What does subtract(-3, -8) return? Explain using the newly added implementation, and confirm that the existing multiplication test still passes.
 
 Expected arithmetic: `5`. Record whether Codex retained the task context and obtained/used actual tool results.
 

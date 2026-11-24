@@ -1,5 +1,7 @@
 # Phase 4 credential validation
 
+> Historical checkpoint: results and restrictions below describe this phase at the time of its checks. For the current 0.0.5 state, handoff priorities and validated scope, start with the [maintainer handoff](handoff.md). Later results do not retroactively change earlier test evidence.
+
 Updated: 2026-11-18 (Asia/Singapore). Branch: `phase-4`.
 
 ## What works now
@@ -33,7 +35,7 @@ Normal source/test/documentation edits stayed inside this project. The following
 2. Build outside the sandbox while keeping outputs project-local.
 3. Install the pinned helper under `%LOCALAPPDATA%\RouteroConnect\helper\0.0.3\`, create/remove one unique dummy Windows credential, and retire the failed `0.0.1` test installation.
 
-No gateway settings, normal Codex settings, global environment variables, or real account keys were changed. Phase 4 inference spending is **$0**. Earlier user-run Phase 2 cost remains unknown.
+No gateway settings, normal Codex settings, global environment variables, or real account keys were changed. Phase 4 inference spending is **$0**. Earlier manual Phase 2 cost remains unknown.
 
 ## Still unverified
 
